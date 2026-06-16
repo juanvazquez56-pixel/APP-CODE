@@ -98,6 +98,28 @@ vercel --prod
 
 ---
 
+---
+
+## ⚠️ Aviso importante: Comunidades privadas y contraseñas
+
+La sección "Comunidades" usa una **contraseña del lado del cliente** (en el navegador).
+
+**Esto NO es seguridad real.** Cualquier persona con conocimientos básicos de programación puede abrir las herramientas del navegador y ver las contraseñas directamente en el código fuente.
+
+**Lo que SÍ puedes poner ahí:**
+- Avisos generales de la comunidad (fechas de sparring, eventos internos, motivación)
+- Información que no importaría mucho si alguien la viera sin querer
+
+**Lo que NUNCA debes poner ahí:**
+- Datos personales de miembros (nombre, teléfono, dirección)
+- Información de pagos o estados de cuenta
+- Contratos o acuerdos privados
+- Cualquier dato sensible o confidencial
+
+La contraseña sirve únicamente como **barrera básica de conveniencia**, no como protección real. Si necesitas seguridad real, considera una solución con autenticación en servidor (Firebase, Supabase, etc.).
+
+---
+
 ## Estructura del proyecto
 
 ```

@@ -275,6 +275,72 @@ const content = {
     texto: "Reserva tu clase muestra · $70",
     // Al hacer clic abre WhatsApp (usa el número y mensaje de arriba)
   },
+
+  // ----------------------------------------------------------
+  // COMUNIDADES PRIVADAS
+  // Sección con acceso por contraseña para planes especiales.
+  //
+  // ⚠️  AVISO IMPORTANTE DE SEGURIDAD:
+  // La contraseña se verifica en el navegador del usuario (lado cliente).
+  // Cualquier persona con conocimientos técnicos puede ver las contraseñas
+  // inspeccionando el código. NO pongas aquí información sensible, datos
+  // personales, contratos, pagos ni nada confidencial.
+  // Sirve como barrera básica para avisos de comunidad, no más.
+  //
+  // CÓMO CAMBIAR LA CONTRASEÑA:
+  //   Cambia el valor de "password" en la comunidad que quieras.
+  //   Avisa a tus miembros la nueva contraseña por WhatsApp.
+  //
+  // CÓMO AGREGAR UN AVISO:
+  //   Agrega un objeto al array "avisos" con: titulo, texto, fecha.
+  //   El primer aviso de la lista aparece hasta arriba.
+  // ----------------------------------------------------------
+  comunidades: [
+    {
+      nombre: "NK Fight Club",
+      // Cambia esta contraseña cuando quieras y avisa a tus miembros
+      password: "fight2026",
+      // Color de acento para esta comunidad (azul = MMA/Fight Club)
+      acento: "blue",
+      emoji: "⚡",
+      descripcion: "Zona exclusiva para miembros del plan NK Fight Club.",
+      avisos: [
+        {
+          titulo: "Bienvenido al Fight Club",
+          texto: "Esta es tu comunidad privada. Aquí publicaremos avisos exclusivos: fechas de sparring especial, invitaciones a eventos y más. ¡Bienvenido!",
+          fecha: "Junio 2026",
+        },
+        // Agrega más avisos aquí siguiendo el mismo formato:
+        // {
+        //   titulo: "Título del aviso",
+        //   texto: "Texto del aviso...",
+        //   fecha: "Junio 2026",
+        // },
+      ],
+    },
+    {
+      nombre: "NK Competitivo",
+      // Cambia esta contraseña cuando quieras y avisa a tus miembros
+      password: "elite2026",
+      // Color de acento para esta comunidad (rojo = élite/competitivo)
+      acento: "red",
+      emoji: "🏆",
+      descripcion: "Zona exclusiva para miembros del plan NK Competitivo.",
+      avisos: [
+        {
+          titulo: "Bienvenido a NK Competitivo",
+          texto: "Canal privado para competidores. Aquí encontrarás fechas de torneos, convocatorias y preparación especial. Solo por invitación.",
+          fecha: "Junio 2026",
+        },
+        // Agrega más avisos aquí siguiendo el mismo formato:
+        // {
+        //   titulo: "Próximo torneo",
+        //   texto: "Detalles del torneo...",
+        //   fecha: "Julio 2026",
+        // },
+      ],
+    },
+  ],
 };
 
 export default content;
