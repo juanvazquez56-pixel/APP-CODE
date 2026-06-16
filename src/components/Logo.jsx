@@ -8,8 +8,8 @@ export default function Logo({ size = 200 }) {
     <img
       src="/LOGONKBOX.png"
       alt="NK BOX"
-      width={size}
-      height={size}
+      width={200}
+      height={200}
       className="rounded-2xl"
     />
   )
