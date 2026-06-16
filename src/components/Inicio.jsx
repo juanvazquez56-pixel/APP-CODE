@@ -91,6 +91,13 @@ export default function Inicio({ onNav }) {
                 <span className="text-xs text-zinc-500 shrink-0 mt-0.5">{a.fecha}</span>
               </div>
               <p className="text-zinc-400 text-sm mt-1 leading-relaxed">{a.texto}</p>
+              {a.imagen && (
+                <img
+                  src={a.imagen}
+                  alt={a.titulo}
+                  className="mt-3 w-full rounded-lg object-cover border border-zinc-700"
+                />
+              )}
             </div>
           ))}
         </div>

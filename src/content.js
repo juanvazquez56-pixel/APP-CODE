@@ -29,6 +29,7 @@ const content = {
       texto: "Ven a conocernos. Tu primer clase cuesta $70 y ese pago se abona a tu mensualidad si te inscribes.",
       fecha: "Junio 2026",
       destacado: true, // true = aparece primero con acento dorado
+	imagen: "/horariohorizontal.png",
     },
     {
       titulo: "Ya tenemos clases de MMA",
