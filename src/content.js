@@ -299,7 +299,7 @@ const content = {
     {
       nombre: "NK Fight Club",
       // Cambia esta contraseña cuando quieras y avisa a tus miembros
-      password: "fight2026",
+      password: "nkfight2026",
       // Color de acento para esta comunidad (azul = MMA/Fight Club)
       acento: "blue",
       emoji: "⚡",
@@ -308,6 +308,13 @@ const content = {
         {
           titulo: "Bienvenido al Fight Club",
           texto: "Esta es tu comunidad privada. Aquí publicaremos avisos exclusivos: fechas de sparring especial, invitaciones a eventos y más. ¡Bienvenido!",
+          fecha: "Junio 2026",
+        },
+        {
+          titulo: "Comunidad de WhatsApp",
+          texto: "Canal público para competidores. Aquí encontrarás fechas de eventos, avisos, promociones y más.",
+          link: "https://whatsapp.com/channel/0029VbBo3SbGufIppaNBAf47",
+          linkTexto: "Unirme a la comunidad",
           fecha: "Junio 2026",
         },
         // Agrega más avisos aquí siguiendo el mismo formato:
@@ -321,7 +328,7 @@ const content = {
     {
       nombre: "NK Competitivo",
       // Cambia esta contraseña cuando quieras y avisa a tus miembros
-      password: "elite2026",
+      password: "nkelite2026",
       // Color de acento para esta comunidad (rojo = élite/competitivo)
       acento: "red",
       emoji: "🏆",
@@ -330,6 +337,13 @@ const content = {
         {
           titulo: "Bienvenido a NK Competitivo",
           texto: "Canal privado para competidores. Aquí encontrarás fechas de torneos, convocatorias y preparación especial. Solo por invitación.",
+          fecha: "Junio 2026",
+        },
+        {
+          titulo: "Comunidad de WhatsApp",
+          texto: "Canal público para competidores. Aquí encontrarás fechas de eventos, avisos, promociones y más.",
+          link: "https://whatsapp.com/channel/0029VbBo3SbGufIppaNBAf47",
+          linkTexto: "Unirme a la comunidad",
           fecha: "Junio 2026",
         },
         // Agrega más avisos aquí siguiendo el mismo formato:
