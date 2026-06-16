@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-950 text-white;
+    font-family: 'Arial', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+  }
+  /* Scrollbar horizontal para tabs en celular */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Gradiente de acento dorado animado para el hero */
+.gold-glow {
+  text-shadow: 0 0 30px rgba(251, 191, 36, 0.5);
+}
+
+/* Color por tipo de clase */
+.clase-boxfit  { border-left-color: #22c55e; } /* verde */
+.clase-combat  { border-left-color: #3b82f6; } /* azul */
+.clase-control { border-left-color: #6b7280; } /* gris */
+.clase-elite   { border-left-color: #ef4444; } /* rojo */
+.clase-kids    { border-left-color: #a855f7; } /* morado */
+.clase-mma     { border-left-color: #f59e0b; } /* dorado */
+
+.badge-boxfit  { @apply bg-green-900/60 text-green-400; }
+.badge-combat  { @apply bg-blue-900/60 text-blue-400; }
+.badge-control { @apply bg-zinc-700/60 text-zinc-300; }
+.badge-elite   { @apply bg-red-900/60 text-red-400; }
+.badge-kids    { @apply bg-purple-900/60 text-purple-400; }
+.badge-mma     { @apply bg-yellow-900/60 text-yellow-400; }
