@@ -200,6 +200,51 @@ const content = {
   planesNota: "Sin inscripción · Precios mensuales · Alianzas: Clínica EF y Bestia Gold Gym",
 
   // ----------------------------------------------------------
+  // CALCULADORA DE PLAN IDEAL (dentro de la sección Planes)
+  // Hace 1 o 2 preguntas y recomienda un plan de la lista "planes" de arriba.
+  //
+  // CÓMO EDITAR LAS PREGUNTAS:
+  //   - "pregunta1.opciones" son las opciones de la primera pregunta.
+  //     Cada opción tiene un "valor" (úsalo en las reglas) y una "etiqueta" (texto visible).
+  //   - "pregunta2" es una pregunta opcional que solo aparece si la respuesta
+  //     de la pregunta 1 está en la lista "soloSiInteresEs".
+  //
+  // CÓMO EDITAR QUÉ PLAN RECOMIENDA CADA RESPUESTA:
+  //   - "reglas" es la lista de combinaciones. Se revisan en orden y se usa
+  //     la PRIMERA que haga match. Si una regla no necesita la pregunta 2,
+  //     simplemente no le pongas la propiedad "gym".
+  //   - El campo "plan" debe escribirse EXACTAMENTE igual al "nombre" de
+  //     algún plan en la lista "planes" de arriba (mayúsculas y todo).
+  // ----------------------------------------------------------
+  calculadora: {
+    pregunta1: {
+      texto: "¿Qué te interesa entrenar?",
+      opciones: [
+        { valor: "boxeo",    etiqueta: "Boxeo" },
+        { valor: "mma",      etiqueta: "Boxeo + MMA" },
+        { valor: "ninos",    etiqueta: "Clases para niños" },
+        { valor: "competir", etiqueta: "Quiero competir" },
+      ],
+    },
+    pregunta2: {
+      texto: "¿Quieres acceso también al gym de pesas (Bestia Gold Gym)?",
+      // Esta pregunta solo se muestra si la respuesta anterior fue una de estas:
+      soloSiInteresEs: ["boxeo"],
+      opciones: [
+        { valor: "si", etiqueta: "Sí, también quiero pesas" },
+        { valor: "no", etiqueta: "No, solo boxeo" },
+      ],
+    },
+    reglas: [
+      { interes: "ninos",    plan: "NK Kids" },
+      { interes: "competir", plan: "NK Competitivo" },
+      { interes: "mma",      plan: "NK Fight Club" },
+      { interes: "boxeo", gym: "si", plan: "NK Box + Gym" },
+      { interes: "boxeo", gym: "no", plan: "NK Básico" },
+    ],
+  },
+
+  // ----------------------------------------------------------
   // DISCIPLINAS (sección Disciplinas)
   // Cada una tiene: nombre, emoji, descripcion, tipo (para el color)
   // ----------------------------------------------------------

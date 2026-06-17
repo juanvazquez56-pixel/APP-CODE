@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import content from '../content'
+import Calculadora from './Calculadora'
 
 function whatsappPlan(c, plan) {
   const msg = `Hola, me interesa el plan ${plan.nombre} (${plan.precio}). ¿Me pueden dar más info?`
@@ -7,6 +9,7 @@ function whatsappPlan(c, plan) {
 
 export default function Planes({ onNav }) {
   const c = content
+  const [mostrarCalculadora, setMostrarCalculadora] = useState(false)
 
   return (
     <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
@@ -14,6 +17,21 @@ export default function Planes({ onNav }) {
         Planes
       </h2>
       <p className="text-zinc-500 text-xs mb-5 tracking-wide">Sin inscripción · Pago mensual</p>
+
+      {/* BOTÓN CALCULADORA DE PLAN IDEAL */}
+      <button
+        onClick={() => setMostrarCalculadora(true)}
+        className="mb-5 flex items-center justify-center gap-2 w-full py-4 rounded-2xl
+          bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-950 font-bold text-sm
+          shadow-lg shadow-yellow-900/30 transition-all active:scale-95"
+      >
+        <span className="text-lg">🧮</span>
+        ¿No sabes cuál elegir? Calcula tu plan ideal
+      </button>
+
+      {mostrarCalculadora && (
+        <Calculadora onClose={() => setMostrarCalculadora(false)} />
+      )}
 
       <div className="flex flex-col gap-4">
         {c.planes.map((plan, i) => (

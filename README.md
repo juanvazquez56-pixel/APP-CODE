@@ -21,6 +21,30 @@ Abre tu navegador en `http://localhost:5173`
 
 ---
 
+## 📲 Cómo instalar la app en el celular (PWA)
+
+Esta app funciona como **PWA (Progressive Web App)**: una vez publicada en internet, los miembros pueden "instalarla" en su celular sin pasar por ninguna tienda de aplicaciones. Queda como un ícono más en su pantalla de inicio y abre a pantalla completa, sin la barra del navegador.
+
+### En Android (Chrome)
+1. Abre el link de la app en Chrome.
+2. Espera unos segundos: puede aparecer un aviso de **"Instala NK BOX en tu celular"** dentro de la misma app — solo toca **Instalar**.
+3. Si no aparece el aviso, toca el menú de tres puntos (⋮) arriba a la derecha de Chrome → **"Instalar app"** o **"Agregar a pantalla de inicio"**.
+4. Confirma y listo: el ícono de NK BOX aparece en su pantalla de inicio.
+
+### En iPhone (Safari)
+Apple no permite instalar PWAs con un solo botón automático — el usuario debe hacerlo manualmente:
+1. Abre el link de la app en **Safari** (debe ser Safari, no Chrome ni otro navegador).
+2. Toca el ícono de **Compartir** (el cuadrado con una flecha hacia arriba), generalmente abajo en medio de la pantalla.
+3. Baja en el menú y toca **"Agregar a pantalla de inicio"**.
+4. Confirma el nombre ("NK BOX") y toca **Agregar**.
+5. El ícono aparece en su pantalla de inicio y abre la app a pantalla completa.
+
+### Notas para ti como administrador
+- El ícono de la app usa la imagen `public/LOGONKBOX.png`. Si cambias el logo, reemplaza ese archivo (debe ser cuadrado, idealmente 512x512 px o más) y todos los íconos se actualizan solos.
+- No necesitas configurar nada más: el `manifest.webmanifest` y el archivo de "service worker" se generan automáticamente al correr `npm run build`, gracias al plugin `vite-plugin-pwa`.
+
+---
+
 ## ✏️ Cómo editar el contenido
 
 **Todo el contenido está en un solo archivo:**
@@ -45,6 +69,7 @@ No necesitas tocar ningún otro archivo.
 | Galería | `content.galeria` — fotos del gym (ver sección de fotos abajo) |
 | Muro de Campeones | `content.campeones` — fotos, nombres y logros de alumnos |
 | Menú "Más" | `content.masAccesos` — qué secciones aparecen en el menú Más |
+| Calculadora de plan ideal | `content.calculadora` — preguntas, opciones y qué plan recomienda cada respuesta |
 
 ### Para cambiar el logo
 Pon tu imagen en `public/logo.png` y edita `src/components/Logo.jsx` para usar:
@@ -171,10 +196,12 @@ src/
     ├── Inicio.jsx      ← Pantalla de anuncios y bienvenida
     ├── Horarios.jsx    ← Horarios por día con colores
     ├── Planes.jsx      ← Tarjetas de planes y precios
+    ├── Calculadora.jsx ← Calculadora de plan ideal (modal dentro de Planes)
     ├── Contacto.jsx    ← Dirección, WhatsApp, redes sociales
     ├── Comunidades.jsx ← Comunidades privadas con contraseña
     ├── Mas.jsx         ← Menú "Más" con accesos secundarios
     ├── FAQ.jsx         ← Preguntas frecuentes (acordeón)
     ├── Galeria.jsx     ← Cuadrícula de fotos con modal
-    └── Campeones.jsx   ← Muro de campeones
+    ├── Campeones.jsx   ← Muro de campeones
+    └── InstalarApp.jsx ← Aviso flotante para instalar la PWA
 ```
