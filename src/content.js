@@ -216,33 +216,41 @@ const content = {
   //   - El campo "plan" debe escribirse EXACTAMENTE igual al "nombre" de
   //     algún plan en la lista "planes" de arriba (mayúsculas y todo).
   // ----------------------------------------------------------
-  calculadora: {
-    pregunta1: {
-      texto: "¿Qué te interesa entrenar?",
-      opciones: [
-        { valor: "boxeo",    etiqueta: "Boxeo" },
-        { valor: "mma",      etiqueta: "Boxeo + MMA" },
-        { valor: "ninos",    etiqueta: "Clases para niños" },
-        { valor: "competir", etiqueta: "Quiero competir" },
+calculadora: {
+      pregunta1: {
+        texto: "¿Para quién es la membresía?",
+        opciones: [
+          { valor: "adulto", etiqueta: "Para mí (adulto)" },
+          { valor: "ninos",  etiqueta: "Para un niño/a (6 a 13 años)" },
+        ],
+      },
+      pregunta2: {
+        texto: "¿Qué te interesa entrenar?",
+        // Solo se muestra si en la pregunta 1 eligió "adulto"
+        soloSiInteresEs: ["adulto"],
+        opciones: [
+          { valor: "boxeo",    etiqueta: "Boxeo y ponerme en forma" },
+          { valor: "mma",      etiqueta: "Boxeo + MMA" },
+          { valor: "competir", etiqueta: "Competir a nivel alto" },
+        ],
+      },
+      pregunta3: {
+        texto: "¿Quieres incluir acceso al gym de pesas (Bestia Gold Gym)?",
+        // Solo se muestra si en la pregunta 2 eligió "boxeo"
+        soloSiObjetivoEs: ["boxeo"],
+        opciones: [
+          { valor: "si", etiqueta: "Sí, también quiero pesas" },
+          { valor: "no", etiqueta: "No, solo clases" },
+        ],
+      },
+      reglas: [
+        { quien: "ninos",  plan: "NK Kids" },
+        { quien: "adulto", objetivo: "competir", plan: "NK Competitivo" },
+        { quien: "adulto", objetivo: "mma",      plan: "NK Fight Club" },
+        { quien: "adulto", objetivo: "boxeo", gym: "si", plan: "NK Box + Gym" },
+        { quien: "adulto", objetivo: "boxeo", gym: "no", plan: "NK Básico" },
       ],
     },
-    pregunta2: {
-      texto: "¿Quieres acceso también al gym de pesas (Bestia Gold Gym)?",
-      // Esta pregunta solo se muestra si la respuesta anterior fue una de estas:
-      soloSiInteresEs: ["boxeo"],
-      opciones: [
-        { valor: "si", etiqueta: "Sí, también quiero pesas" },
-        { valor: "no", etiqueta: "No, solo boxeo" },
-      ],
-    },
-    reglas: [
-      { interes: "ninos",    plan: "NK Kids" },
-      { interes: "competir", plan: "NK Competitivo" },
-      { interes: "mma",      plan: "NK Fight Club" },
-      { interes: "boxeo", gym: "si", plan: "NK Box + Gym" },
-      { interes: "boxeo", gym: "no", plan: "NK Básico" },
-    ],
-  },
 
   // ----------------------------------------------------------
   // DISCIPLINAS (sección Disciplinas)
@@ -486,16 +494,12 @@ const content = {
   // ----------------------------------------------------------
   galeria: [
     {
-      imagen: "/galeria1.jpg",
-      descripcion: "Entrenamiento de Box Fit en el gym",
-    },
-    {
-      imagen: "/galeria2.jpg",
+      imagen: "/NK_BOX_MMA_striking.png",
       descripcion: "Clase de MMA — Striking",
     },
     {
       imagen: "/galeria3.jpg",
-      descripcion: "Niños en clase de NK Kids",
+      descripcion: "INSTALACIONES",
     },
     // Agrega más fotos aquí siguiendo el mismo formato:
     // { imagen: "/galeria4.jpg", descripcion: "Descripción de la foto" },

@@ -3,50 +3,57 @@ import content from '../content'
 
 export default function Calculadora({ onClose }) {
   const { calculadora, planes, contacto } = content
-  const [interes, setInteres] = useState(null)
+  const [quien, setQuien] = useState(null)
+  const [objetivo, setObjetivo] = useState(null)
   const [gym, setGym] = useState(null)
   const [resultado, setResultado] = useState(null)
 
-  const necesitaPreguntaGym = interes && calculadora.pregunta2.soloSiInteresEs.includes(interes)
-
-  function calcular(interesValor, gymValor) {
+  function buscarPlan(q, o, g) {
     const regla = calculadora.reglas.find(r =>
-      r.interes === interesValor && (r.gym === undefined || r.gym === gymValor)
+      r.quien === q &&
+      (r.objetivo === undefined || r.objetivo === o) &&
+      (r.gym === undefined || r.gym === g)
     )
-    if (regla) {
-      setResultado(planes.find(p => p.nombre === regla.plan) ?? null)
+    return regla ? (planes.find(p => p.nombre === regla.plan) ?? null) : null
+  }
+
+  function elegirQuien(valor) {
+    setQuien(valor)
+    if (!calculadora.pregunta2.soloSiInteresEs.includes(valor)) {
+      setResultado(buscarPlan(valor, null, null))
     }
   }
 
-  function elegirInteres(valor) {
-    setInteres(valor)
-    if (!calculadora.pregunta2.soloSiInteresEs.includes(valor)) {
-      calcular(valor, null)
+  function elegirObjetivo(valor) {
+    setObjetivo(valor)
+    if (!calculadora.pregunta3.soloSiObjetivoEs.includes(valor)) {
+      setResultado(buscarPlan(quien, valor, null))
     }
   }
 
   function elegirGym(valor) {
     setGym(valor)
-    calcular(interes, valor)
+    setResultado(buscarPlan(quien, objetivo, valor))
   }
 
   function reiniciar() {
-    setInteres(null)
+    setQuien(null)
+    setObjetivo(null)
     setGym(null)
     setResultado(null)
   }
 
+  const mostrarP2 = quien && calculadora.pregunta2.soloSiInteresEs.includes(quien) && !objetivo
+  const mostrarP3 = objetivo && calculadora.pregunta3.soloSiObjetivoEs.includes(objetivo) && !gym
+
   const waUrl = resultado
     ? `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent(
-        `Hola, hice la calculadora de plan ideal y me recomendó ${resultado.nombre}. Quiero inscribirme.`
+        `Hola, hice la calculadora de plan ideal y me recomendo ${resultado.nombre}. Quiero inscribirme.`
       )}`
     : '#'
 
   return (
-    <div
-      className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
       <div
         className="w-full max-w-sm bg-zinc-900 border border-yellow-500/30 rounded-2xl p-5 max-h-[85vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
@@ -56,11 +63,10 @@ export default function Calculadora({ onClose }) {
             Calcula tu plan ideal
           </h3>
           <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 text-2xl leading-none">
-            ×
+            &times;
           </button>
         </div>
 
-        {/* RESULTADO */}
         {resultado ? (
           <div>
             <p className="text-zinc-400 text-sm mb-3">Con base en tus respuestas, te recomendamos:</p>
@@ -75,54 +81,43 @@ export default function Calculadora({ onClose }) {
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-center py-3 rounded-xl font-bold text-sm bg-green-500 hover:bg-green-400
-                text-white transition-all active:scale-95 mb-2"
+              className="block text-center py-3 rounded-xl font-bold text-sm bg-green-500 hover:bg-green-400 text-white transition-all active:scale-95 mb-2"
             >
               Inscribirme por WhatsApp
             </a>
             <button
               onClick={reiniciar}
-              className="block w-full text-center py-2 rounded-xl text-zinc-400 text-sm border border-zinc-700
-                hover:bg-zinc-800 transition-colors"
+              className="block w-full text-center py-2 rounded-xl text-zinc-400 text-sm border border-zinc-700 hover:bg-zinc-800 transition-colors"
             >
               Volver a calcular
             </button>
           </div>
-        ) : necesitaPreguntaGym ? (
-          /* PREGUNTA 2 */
-          <div>
-            <p className="text-zinc-300 text-sm font-semibold mb-3">{calculadora.pregunta2.texto}</p>
-            <div className="flex flex-col gap-2">
-              {calculadora.pregunta2.opciones.map(op => (
-                <button
-                  key={op.valor}
-                  onClick={() => elegirGym(op.valor)}
-                  className="text-left py-3 px-4 rounded-xl border border-zinc-700 bg-zinc-800
-                    hover:border-yellow-500/50 text-white text-sm transition-colors"
-                >
-                  {op.etiqueta}
-                </button>
-              ))}
-            </div>
-          </div>
+        ) : mostrarP3 ? (
+          <Pregunta data={calculadora.pregunta3} onElegir={elegirGym} />
+        ) : mostrarP2 ? (
+          <Pregunta data={calculadora.pregunta2} onElegir={elegirObjetivo} />
         ) : (
-          /* PREGUNTA 1 */
-          <div>
-            <p className="text-zinc-300 text-sm font-semibold mb-3">{calculadora.pregunta1.texto}</p>
-            <div className="flex flex-col gap-2">
-              {calculadora.pregunta1.opciones.map(op => (
-                <button
-                  key={op.valor}
-                  onClick={() => elegirInteres(op.valor)}
-                  className="text-left py-3 px-4 rounded-xl border border-zinc-700 bg-zinc-800
-                    hover:border-yellow-500/50 text-white text-sm transition-colors"
-                >
-                  {op.etiqueta}
-                </button>
-              ))}
-            </div>
-          </div>
+          <Pregunta data={calculadora.pregunta1} onElegir={elegirQuien} />
         )}
+      </div>
+    </div>
+  )
+}
+
+function Pregunta({ data, onElegir }) {
+  return (
+    <div>
+      <p className="text-zinc-300 text-sm font-semibold mb-3">{data.texto}</p>
+      <div className="flex flex-col gap-2">
+        {data.opciones.map(op => (
+          <button
+            key={op.valor}
+            onClick={() => onElegir(op.valor)}
+            className="text-left py-3 px-4 rounded-xl border border-zinc-700 bg-zinc-800 hover:border-yellow-500/50 text-white text-sm transition-colors"
+          >
+            {op.etiqueta}
+          </button>
+        ))}
       </div>
     </div>
   )

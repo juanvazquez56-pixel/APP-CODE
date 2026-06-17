@@ -23,10 +23,10 @@ export default function Planes({ onNav }) {
         onClick={() => setMostrarCalculadora(true)}
         className="mb-5 flex items-center justify-center gap-2 w-full py-4 rounded-2xl
           bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-950 font-bold text-sm
-          shadow-lg shadow-yellow-900/30 transition-all active:scale-95"
+          shadow-lg shadow-yellow-900/30 transition-all active:scale-96"
       >
-        <span className="text-lg">🧮</span>
-        ¿No sabes cuál elegir? Calcula tu plan ideal
+        <span className="text-lg"></span >
+        ¿NO SABES CUÁL ELEGIR? CALCULA TU PLAN IDEAL
       </button>
 
       {mostrarCalculadora && (
