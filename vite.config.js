@@ -19,17 +19,17 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/LOGONKBOX.png',
+            src: '/LOGONKBOX-icono.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/LOGONKBOX.png',
-            sizes: '512x512',
+            src: '/LOGONKBOX-icono.png',
+            sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/LOGONKBOX.png',
+            src: '/LOGONKBOX-icono.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
