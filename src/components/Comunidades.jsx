@@ -197,11 +197,18 @@ function TarjetaComunidad({ comunidad }) {
   )
 }
 
-export default function Comunidades() {
+export default function Comunidades({ onNav }) {
   const { comunidades } = content
 
   return (
     <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
+      <button
+        onClick={() => onNav('mas')}
+        className="flex items-center gap-1 text-zinc-500 hover:text-yellow-400 text-sm mb-3 transition-colors"
+      >
+        <BackIcon className="w-4 h-4" /> Más
+      </button>
+
       <h2 className="font-display text-2xl font-black uppercase tracking-widest text-yellow-400 mb-1">
         Comunidades
       </h2>
@@ -223,6 +230,14 @@ export default function Comunidades() {
         </p>
       </div>
     </div>
+  )
+}
+
+function BackIcon({ className }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
   )
 }
 

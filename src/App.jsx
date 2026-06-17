@@ -5,6 +5,7 @@ import Horarios from './components/Horarios'
 import Planes from './components/Planes'
 import Contacto from './components/Contacto'
 import Comunidades from './components/Comunidades'
+import Mas from './components/Mas'
 
 export default function App() {
   const [seccion, setSeccion] = useState('inicio')
@@ -14,8 +15,9 @@ export default function App() {
       {seccion === 'inicio'      && <Inicio      onNav={setSeccion} />}
       {seccion === 'horarios'    && <Horarios />}
       {seccion === 'planes'      && <Planes      onNav={setSeccion} />}
-      {seccion === 'contacto'    && <Contacto />}
-      {seccion === 'comunidades' && <Comunidades />}
+      {seccion === 'mas'         && <Mas         onNav={setSeccion} />}
+      {seccion === 'contacto'    && <Contacto    onNav={setSeccion} />}
+      {seccion === 'comunidades' && <Comunidades onNav={setSeccion} />}
       <NavBar seccion={seccion} setSeccion={setSeccion} />
     </div>
   )

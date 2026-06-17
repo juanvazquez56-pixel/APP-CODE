@@ -355,6 +355,36 @@ const content = {
       ],
     },
   ],
+
+  // ----------------------------------------------------------
+  // PANTALLA "MÁS" — accesos a secciones secundarias
+  // Aparecen como lista al tocar el botón "Más" en la barra inferior.
+  //
+  // CÓMO AGREGAR UNA SECCIÓN NUEVA (ej. FAQ, Galería, Campeones):
+  //   1. Crea su componente en src/components/ (ej. Faq.jsx)
+  //   2. Impórtalo y agrégalo a App.jsx con su propio id (ej. "faq")
+  //   3. Agrega un objeto aquí abajo con: id, label, emoji, descripcion
+  //   4. (Opcional) agrega ese id a SECCIONES_DENTRO_DE_MAS en NavBar.jsx
+  //      para que el botón "Más" se resalte al estar en esa sección.
+  // ----------------------------------------------------------
+  masAccesos: [
+    {
+      id: "contacto",
+      label: "Contacto",
+      emoji: "📞",
+      descripcion: "Dirección, WhatsApp y redes sociales",
+    },
+    {
+      id: "comunidades",
+      label: "Comunidad",
+      emoji: "🔒",
+      descripcion: "Zonas privadas para planes especiales",
+    },
+    // Agrega aquí más accesos en el futuro, por ejemplo:
+    // { id: "faq", label: "Preguntas frecuentes", emoji: "❓", descripcion: "Dudas comunes sobre el gym" },
+    // { id: "galeria", label: "Galería", emoji: "📸", descripcion: "Fotos y videos del gym" },
+    // { id: "campeones", label: "Campeones", emoji: "🥇", descripcion: "Nuestros alumnos destacados" },
+  ],
 };
 
 export default content;

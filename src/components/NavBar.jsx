@@ -30,48 +30,45 @@ const tabs = [
     ),
   },
   {
-    id: 'contacto',
-    label: 'Contacto',
+    id: 'mas',
+    label: 'Más',
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-      </svg>
-    ),
-  },
-  {
-    id: 'comunidades',
-    label: 'Comunidad',
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+          d="M4 6h16M4 12h16M4 18h16" />
       </svg>
     ),
   },
 ]
 
+// Secciones que, aunque no tengan botón propio en la barra, deben
+// dejar resaltado el botón "Más" porque se accede a ellas desde ahí.
+// Si agregas una sección nueva en Mas.jsx, agrega su id aquí también.
+const SECCIONES_DENTRO_DE_MAS = ['mas', 'contacto', 'comunidades']
+
 export default function NavBar({ seccion, setSeccion }) {
+  const activarMas = SECCIONES_DENTRO_DE_MAS.includes(seccion)
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-zinc-900 border-t border-zinc-800 safe-area-pb">
       <div className="flex">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setSeccion(tab.id)}
-            className={`flex-1 flex flex-col items-center justify-center py-3 gap-0.5 transition-colors
-              ${seccion === tab.id
-                ? 'text-yellow-400'
-                : 'text-zinc-500 hover:text-zinc-300'
-              }`}
-          >
-            {tab.icon}
-            <span className="text-xs font-medium">{tab.label}</span>
-            {seccion === tab.id && (
-              <span className="absolute top-0 w-8 h-0.5 bg-yellow-400 rounded-full" />
-            )}
-          </button>
-        ))}
+        {tabs.map(tab => {
+          const activo = tab.id === 'mas' ? activarMas : seccion === tab.id
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setSeccion(tab.id)}
+              className={`relative flex-1 flex flex-col items-center justify-center py-3 gap-0.5 transition-colors
+                ${activo ? 'text-yellow-400' : 'text-zinc-500 hover:text-zinc-300'}`}
+            >
+              {tab.icon}
+              <span className="text-xs font-medium">{tab.label}</span>
+              {activo && (
+                <span className="absolute top-0 w-8 h-0.5 bg-yellow-400 rounded-full" />
+              )}
+            </button>
+          )
+        })}
       </div>
     </nav>
   )
