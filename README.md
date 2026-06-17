@@ -41,12 +41,49 @@ No necesitas tocar ningún otro archivo.
 | Disciplinas | `content.disciplinas` — descripción de cada clase |
 | Contacto | `content.contacto` — WhatsApp, Instagram, dirección |
 | Logo/nombre | `content.gym` — nombre, slogan, badges |
+| Preguntas frecuentes | `content.faq` — agrega o edita preguntas y respuestas |
+| Galería | `content.galeria` — fotos del gym (ver sección de fotos abajo) |
+| Muro de Campeones | `content.campeones` — fotos, nombres y logros de alumnos |
+| Menú "Más" | `content.masAccesos` — qué secciones aparecen en el menú Más |
 
 ### Para cambiar el logo
 Pon tu imagen en `public/logo.png` y edita `src/components/Logo.jsx` para usar:
 ```jsx
 <img src="/logo.png" alt="NK BOX" />
 ```
+
+### Cómo agregar preguntas frecuentes (FAQ)
+Abre `src/content.js`, busca `faq: [` y agrega un objeto nuevo dentro del array:
+```js
+{
+  pregunta: "¿Tu pregunta aquí?",
+  respuesta: "Tu respuesta aquí...",
+},
+```
+Aparecerá automáticamente como una nueva pregunta desplegable.
+
+### Cómo subir fotos a la Galería o al Muro de Campeones
+
+Las fotos **no se editan en el código**, se guardan como archivos:
+
+1. Busca la carpeta `public/` en la raíz del proyecto (al mismo nivel que `src/`).
+2. Copia ahí tu foto (formato `.jpg` o `.png`).
+3. **Muy importante: nombra el archivo sin espacios ni acentos.**
+   - ✅ Correcto: `galeria4.jpg`, `campeon-juan.jpg`
+   - ❌ Incorrecto: `galería 4.jpg`, `campeón Juan.png`
+4. Abre `src/content.js` y agrega un objeto nuevo:
+
+   **Para la Galería:**
+   ```js
+   { imagen: "/galeria4.jpg", descripcion: "Descripción de la foto" },
+   ```
+
+   **Para el Muro de Campeones:**
+   ```js
+   { foto: "/campeon4.jpg", nombre: "Nombre completo", logro: "Su logro destacado" },
+   ```
+
+   La ruta siempre empieza con `/` seguido del nombre exacto del archivo que pusiste en `public/`.
 
 ---
 
@@ -134,5 +171,10 @@ src/
     ├── Inicio.jsx      ← Pantalla de anuncios y bienvenida
     ├── Horarios.jsx    ← Horarios por día con colores
     ├── Planes.jsx      ← Tarjetas de planes y precios
-    └── Contacto.jsx    ← Dirección, WhatsApp, redes sociales
+    ├── Contacto.jsx    ← Dirección, WhatsApp, redes sociales
+    ├── Comunidades.jsx ← Comunidades privadas con contraseña
+    ├── Mas.jsx         ← Menú "Más" con accesos secundarios
+    ├── FAQ.jsx         ← Preguntas frecuentes (acordeón)
+    ├── Galeria.jsx     ← Cuadrícula de fotos con modal
+    └── Campeones.jsx   ← Muro de campeones
 ```

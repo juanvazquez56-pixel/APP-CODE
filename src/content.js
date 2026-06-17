@@ -380,10 +380,105 @@ const content = {
       emoji: "🔒",
       descripcion: "Zonas privadas para planes especiales",
     },
-    // Agrega aquí más accesos en el futuro, por ejemplo:
-    // { id: "faq", label: "Preguntas frecuentes", emoji: "❓", descripcion: "Dudas comunes sobre el gym" },
-    // { id: "galeria", label: "Galería", emoji: "📸", descripcion: "Fotos y videos del gym" },
-    // { id: "campeones", label: "Campeones", emoji: "🥇", descripcion: "Nuestros alumnos destacados" },
+    {
+      id: "faq",
+      label: "Preguntas frecuentes",
+      emoji: "❓",
+      descripcion: "Dudas comunes sobre el gym",
+    },
+    {
+      id: "galeria",
+      label: "Galería",
+      emoji: "📸",
+      descripcion: "Fotos y videos del gym",
+    },
+    {
+      id: "campeones",
+      label: "Campeones",
+      emoji: "🥇",
+      descripcion: "Nuestros alumnos destacados",
+    },
+    // Agrega aquí más accesos en el futuro siguiendo el mismo formato.
+  ],
+
+  // ----------------------------------------------------------
+  // PREGUNTAS FRECUENTES (FAQ)
+  // Cada pregunta tiene: pregunta, respuesta.
+  // Agrega o quita preguntas libremente, el orden es el que se muestra.
+  // ----------------------------------------------------------
+  faq: [
+    {
+      pregunta: "¿Qué debo llevar a mi primera clase?",
+      respuesta: "Ropa deportiva cómoda, tenis, una toalla pequeña y una botella de agua. Si tienes vendas y guantes de box tráelos, pero no son obligatorios para la clase muestra: te prestamos el equipo básico.",
+    },
+    {
+      pregunta: "¿Dónde puedo estacionarme?",
+      respuesta: "Hay espacio para estacionarte sobre Av. Tarahumaras, frente al gym. También puedes preguntar con el personal por opciones cercanas si no encuentras lugar.",
+    },
+    {
+      pregunta: "¿Qué formas de pago aceptan?",
+      respuesta: "Aceptamos efectivo y transferencia bancaria. Próximamente pago con tarjeta. Pregunta a tu instructor por los datos de transferencia.",
+    },
+    {
+      pregunta: "¿Hay inscripción o algún pago inicial?",
+      respuesta: "No. En NK BOX no cobramos inscripción. Solo pagas tu mensualidad o el plan que elijas, sin pagos ocultos.",
+    },
+    // Agrega más preguntas aquí siguiendo el mismo formato:
+    // {
+    //   pregunta: "¿Tu pregunta aquí?",
+    //   respuesta: "Tu respuesta aquí...",
+    // },
+  ],
+
+  // ----------------------------------------------------------
+  // GALERÍA DEL GYM
+  // Cada foto tiene: imagen (ruta dentro de /public), descripcion.
+  //
+  // CÓMO AGREGAR FOTOS:
+  //   1. Guarda tu foto dentro de la carpeta /public en la raíz del proyecto.
+  //   2. Nombra el archivo SIN espacios ni acentos (ej. "galeria4.jpg", NO "galería 4.jpg").
+  //   3. Agrega un objeto aquí con la ruta empezando en "/" (ej. "/galeria4.jpg").
+  // ----------------------------------------------------------
+  galeria: [
+    {
+      imagen: "/galeria1.jpg",
+      descripcion: "Entrenamiento de Box Fit en el gym",
+    },
+    {
+      imagen: "/galeria2.jpg",
+      descripcion: "Clase de MMA — Striking",
+    },
+    {
+      imagen: "/galeria3.jpg",
+      descripcion: "Niños en clase de NK Kids",
+    },
+    // Agrega más fotos aquí siguiendo el mismo formato:
+    // { imagen: "/galeria4.jpg", descripcion: "Descripción de la foto" },
+  ],
+
+  // ----------------------------------------------------------
+  // MURO DE CAMPEONES
+  // Cada campeón tiene: foto (ruta dentro de /public), nombre, logro.
+  // Mismo proceso que la galería para subir las fotos a /public.
+  // ----------------------------------------------------------
+  campeones: [
+    {
+      foto: "/campeon1.jpg",
+      nombre: "Juan Pérez",
+      logro: "Campeón estatal de boxeo amateur 2025",
+    },
+    {
+      foto: "/campeon2.jpg",
+      nombre: "María López",
+      logro: "Subcampeona nacional de MMA 2025",
+    },
+    {
+      foto: "/campeon3.jpg",
+      nombre: "Carlos Ramírez",
+      logro: "5 años de NK BOX y entrenador certificado",
+    },
+    // Agrega más campeones aquí siguiendo el mismo formato:
+    // { foto: "/campeon4.jpg", nombre: "Nombre completo", logro: "Su logro destacado" },
   ],
 };
 

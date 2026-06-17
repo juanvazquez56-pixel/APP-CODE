@@ -44,7 +44,7 @@ const tabs = [
 // Secciones que, aunque no tengan botón propio en la barra, deben
 // dejar resaltado el botón "Más" porque se accede a ellas desde ahí.
 // Si agregas una sección nueva en Mas.jsx, agrega su id aquí también.
-const SECCIONES_DENTRO_DE_MAS = ['mas', 'contacto', 'comunidades']
+const SECCIONES_DENTRO_DE_MAS = ['mas', 'contacto', 'comunidades', 'faq', 'galeria', 'campeones']
 
 export default function NavBar({ seccion, setSeccion }) {
   const activarMas = SECCIONES_DENTRO_DE_MAS.includes(seccion)

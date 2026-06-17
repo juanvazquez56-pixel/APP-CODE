@@ -6,6 +6,9 @@ import Planes from './components/Planes'
 import Contacto from './components/Contacto'
 import Comunidades from './components/Comunidades'
 import Mas from './components/Mas'
+import FAQ from './components/FAQ'
+import Galeria from './components/Galeria'
+import Campeones from './components/Campeones'
 
 export default function App() {
   const [seccion, setSeccion] = useState('inicio')
@@ -18,6 +21,9 @@ export default function App() {
       {seccion === 'mas'         && <Mas         onNav={setSeccion} />}
       {seccion === 'contacto'    && <Contacto    onNav={setSeccion} />}
       {seccion === 'comunidades' && <Comunidades onNav={setSeccion} />}
+      {seccion === 'faq'         && <FAQ         onNav={setSeccion} />}
+      {seccion === 'galeria'     && <Galeria     onNav={setSeccion} />}
+      {seccion === 'campeones'   && <Campeones   onNav={setSeccion} />}
       <NavBar seccion={seccion} setSeccion={setSeccion} />
     </div>
   )
