@@ -470,7 +470,7 @@ calculadora: {
     },
     {
       pregunta: "¿Qué formas de pago aceptan?",
-      respuesta: "Aceptamos efectivo y transferencia bancaria. Próximamente pago con tarjeta. Pregunta a tu instructor por los datos de transferencia.",
+      respuesta: "Aceptamos efectivo y transferencia bancaria y pago con tarjeta. Pregunta en recepción por los datos de transferencia.",
     },
     {
       pregunta: "¿Hay inscripción o algún pago inicial?",
