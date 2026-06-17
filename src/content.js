@@ -514,17 +514,17 @@ calculadora: {
     {
       foto: "/campeon1.jpg",
       nombre: "Juan Pérez",
-      logro: "Campeón estatal de boxeo amateur 2025",
+      logro: "...",
     },
     {
       foto: "/campeon2.jpg",
       nombre: "María López",
-      logro: "Subcampeona nacional de MMA 2025",
+      logro: "...",
     },
     {
       foto: "/campeon3.jpg",
       nombre: "Carlos Ramírez",
-      logro: "5 años de NK BOX y entrenador certificado",
+      logro: "...",
     },
     // Agrega más campeones aquí siguiendo el mismo formato:
     // { foto: "/campeon4.jpg", nombre: "Nombre completo", logro: "Su logro destacado" },
