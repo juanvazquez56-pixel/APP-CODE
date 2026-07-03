@@ -1,5 +1,7 @@
+﻿import { useState, useEffect } from 'react'
 import content from '../content'
 import Logo from './Logo'
+import { supabase } from '../supabaseClient'
 
 function whatsappUrl(c) {
   return `https://wa.me/${c.contacto.whatsapp}?text=${encodeURIComponent(c.ctaPrincipal.texto.includes('$70')
@@ -7,14 +9,35 @@ function whatsappUrl(c) {
     : c.ctaPrincipal.texto)}`
 }
 
+function formatearFecha(fechaISO) {
+  const fecha = new Date(fechaISO)
+  return fecha.toLocaleDateString('es-MX', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
 export default function Inicio({ onNav }) {
   const c = content
+  const [anuncios, setAnuncios] = useState([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    cargarAnuncios()
+  }, [])
+
+  async function cargarAnuncios() {
+    const { data } = await supabase
+      .from('anuncios')
+      .select('*')
+      .eq('activo', true)
+      .order('destacado', { ascending: false })
+      .order('creado_en', { ascending: false })
+    if (data) setAnuncios(data)
+    setCargando(false)
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* HERO */}
       <div className="relative overflow-hidden bg-zinc-950 pt-10 pb-8 px-4 flex flex-col items-center text-center">
-        {/* Radial glow detrás del logo */}
         <div className="absolute inset-0 flex items-start justify-center pointer-events-none">
           <div className="w-64 h-64 rounded-full bg-yellow-500/10 blur-3xl mt-4" />
         </div>
@@ -33,7 +56,6 @@ export default function Inicio({ onNav }) {
           </p>
         </div>
 
-        {/* Badges */}
         <div className="flex flex-wrap justify-center gap-2 mt-4">
           {c.gym.badges.map(b => (
             <span key={b}
@@ -43,12 +65,10 @@ export default function Inicio({ onNav }) {
           ))}
         </div>
 
-        {/* Slogan */}
         <p className="mt-4 text-xl font-display font-black uppercase tracking-wider text-white">
           {c.gym.sloganHero}
         </p>
 
-        {/* CTA WhatsApp */}
         <a
           href={whatsappUrl(c)}
           target="_blank"
@@ -63,7 +83,6 @@ export default function Inicio({ onNav }) {
         </a>
       </div>
 
-      {/* SEPARADOR */}
       <div className="h-px bg-gradient-to-r from-transparent via-yellow-500/40 to-transparent mx-4" />
 
       {/* ANUNCIOS */}
@@ -73,9 +92,15 @@ export default function Inicio({ onNav }) {
         </h2>
 
         <div className="flex flex-col gap-3">
-          {c.anuncios.map((a, i) => (
+          {cargando && (
+            <p className="text-zinc-600 text-sm">Cargando anuncios...</p>
+          )}
+          {!cargando && anuncios.length === 0 && (
+            <p className="text-zinc-600 text-sm">Todavía no hay anuncios.</p>
+          )}
+          {anuncios.map(a => (
             <div
-              key={i}
+              key={a.id}
               className={`rounded-xl p-4 border
                 ${a.destacado
                   ? 'bg-yellow-500/10 border-yellow-500/40'
@@ -88,12 +113,12 @@ export default function Inicio({ onNav }) {
                   {a.destacado && <span className="mr-1">⚡</span>}
                   {a.titulo}
                 </h3>
-                <span className="text-xs text-zinc-500 shrink-0 mt-0.5">{a.fecha}</span>
+                <span className="text-xs text-zinc-500 shrink-0 mt-0.5">{formatearFecha(a.creado_en)}</span>
               </div>
-              <p className="text-zinc-400 text-sm mt-1 leading-relaxed">{a.texto}</p>
-              {a.imagen && (
+              <p className="text-zinc-400 text-sm mt-1 leading-relaxed">{a.descripcion}</p>
+              {a.imagen_url && (
                 <img
-                  src={a.imagen}
+                  src={a.imagen_url}
                   alt={a.titulo}
                   className="mt-3 w-full rounded-lg object-cover border border-zinc-700"
                 />

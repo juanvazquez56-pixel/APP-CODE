@@ -1,5 +1,8 @@
-import { useState } from 'react'
-import content from '../content'
+﻿import { useState, useEffect } from 'react'
+import { supabase } from '../supabaseClient'
+
+const diasOrden = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+const abreviaturas = { Lunes: 'LUN', Martes: 'MAR', Miércoles: 'MIÉ', Jueves: 'JUE', Viernes: 'VIE', Sábado: 'SÁB' }
 
 const leyenda = [
   { tipo: 'boxfit',  label: 'Box Fit',     color: 'bg-green-500' },
@@ -11,14 +14,33 @@ const leyenda = [
 ]
 
 export default function Horarios() {
-  const { horarios } = content
-  const hoy = new Date().toLocaleDateString('es-MX', { weekday: 'long' })
-  const diaHoy = hoy.charAt(0).toUpperCase() + hoy.slice(1)
+  const [clases, setClases] = useState([])
+  const [cargando, setCargando] = useState(true)
+  const [diaActivo, setDiaActivo] = useState(0)
 
-  const indexHoy = horarios.findIndex(h =>
-    diaHoy.startsWith(h.dia.slice(0, 3).normalize('NFD').replace(/[̀-ͯ]/g, ''))
-  )
-  const [diaActivo, setDiaActivo] = useState(indexHoy >= 0 ? indexHoy : 0)
+  useEffect(() => {
+    cargarClases()
+
+    const hoy = new Date().toLocaleDateString('es-MX', { weekday: 'long' })
+    const diaHoy = hoy.charAt(0).toUpperCase() + hoy.slice(1)
+    const indexHoy = diasOrden.findIndex(d =>
+      diaHoy.startsWith(d.slice(0, 3).normalize('NFD').replace(/[\u0300-\u036f]/g, ''))
+    )
+    if (indexHoy >= 0) setDiaActivo(indexHoy)
+  }, [])
+
+  async function cargarClases() {
+    const { data } = await supabase
+      .from('horario_clases')
+      .select('*')
+      .eq('activo', true)
+      .order('dia_orden', { ascending: true })
+      .order('hora_orden', { ascending: true })
+    if (data) setClases(data)
+    setCargando(false)
+  }
+
+  const clasesDelDia = clases.filter(c => c.dia === diasOrden[diaActivo])
 
   return (
     <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
@@ -29,9 +51,9 @@ export default function Horarios() {
 
       {/* TABS DE DÍAS */}
       <div className="flex gap-2 overflow-x-auto scrollbar-hide mb-5 -mx-1 px-1">
-        {horarios.map((h, i) => (
+        {diasOrden.map((d, i) => (
           <button
-            key={h.dia}
+            key={d}
             onClick={() => setDiaActivo(i)}
             className={`shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-all
               ${diaActivo === i
@@ -39,19 +61,21 @@ export default function Horarios() {
                 : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
               }`}
           >
-            {h.abrev}
+            {abreviaturas[d]}
           </button>
         ))}
       </div>
 
       {/* LISTA DE CLASES */}
       <div className="flex flex-col gap-2">
-        {horarios[diaActivo].clases.length === 0 ? (
+        {cargando ? (
+          <p className="text-zinc-500 text-center py-10">Cargando...</p>
+        ) : clasesDelDia.length === 0 ? (
           <p className="text-zinc-500 text-center py-10">Sin clases este día</p>
         ) : (
-          horarios[diaActivo].clases.map((clase, i) => (
+          clasesDelDia.map((clase) => (
             <div
-              key={i}
+              key={clase.id}
               className={`flex items-center gap-3 bg-zinc-900 rounded-xl p-3 border-l-4 clase-${clase.tipo}`}
             >
               <div className="text-center min-w-[60px]">

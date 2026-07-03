@@ -451,6 +451,12 @@ calculadora: {
       emoji: "🥇",
       descripcion: "Nuestros alumnos destacados",
     },
+    {
+      id: "menumaestro",
+      label: "Menú Maestro",
+      emoji: "🔑",
+      descripcion: "Panel de administración (solo staff)",
+    },
     // Agrega aquí más accesos en el futuro siguiendo el mismo formato.
   ],
 

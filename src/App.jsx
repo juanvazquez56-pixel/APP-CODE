@@ -10,6 +10,7 @@ import FAQ from './components/FAQ'
 import Galeria from './components/Galeria'
 import Campeones from './components/Campeones'
 import InstalarApp from './components/InstalarApp'
+import MenuMaestro from './components/MenuMaestro'
 
 export default function App() {
   const [seccion, setSeccion] = useState('inicio')
@@ -25,6 +26,7 @@ export default function App() {
       {seccion === 'faq'         && <FAQ         onNav={setSeccion} />}
       {seccion === 'galeria'     && <Galeria     onNav={setSeccion} />}
       {seccion === 'campeones'   && <Campeones   onNav={setSeccion} />}
+      {seccion === 'menumaestro' && <MenuMaestro onNav={setSeccion} />}
       <InstalarApp />
       <NavBar seccion={seccion} setSeccion={setSeccion} />
     </div>
