@@ -441,11 +441,11 @@ export default function AdminHorarios() {
 
       {/* ─── MODAL EDICIÓN / CREACIÓN ─── */}
       {modal && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-end justify-center p-0"
+        <div className="fixed inset-0 z-[60] bg-black/80 flex items-end justify-center p-0"
           onClick={() => !guardando && setModal(null)}>
           <div
-            className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-t-2xl p-5 flex flex-col gap-4"
-            style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
+            className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-t-2xl p-5 flex flex-col gap-4 overflow-y-auto"
+            style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom, 0px))', maxHeight: '90dvh' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Cabecera */}
@@ -546,7 +546,7 @@ export default function AdminHorarios() {
 
       {/* ─── MODAL COPIAR DÍA ─── */}
       {modCopiar && (
-        <div className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+        <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4"
           onClick={() => !copiando && setModCopiar(false)}>
           <div
             className="w-full max-w-sm bg-zinc-900 border border-zinc-700 rounded-2xl p-5 flex flex-col gap-4"
