@@ -444,7 +444,8 @@ export default function AdminHorarios() {
         <div className="fixed inset-0 z-50 bg-black/80 flex items-end justify-center p-0"
           onClick={() => !guardando && setModal(null)}>
           <div
-            className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-t-2xl p-5 pb-8 flex flex-col gap-4"
+            className="w-full max-w-lg bg-zinc-900 border border-zinc-700 rounded-t-2xl p-5 flex flex-col gap-4"
+            style={{ paddingBottom: 'calc(2rem + env(safe-area-inset-bottom, 0px))' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Cabecera */}

@@ -16,7 +16,7 @@ export default function App() {
   const [seccion, setSeccion] = useState('inicio')
 
   return (
-    <div className="min-h-screen bg-zinc-950 pb-20">
+    <div className="min-h-screen bg-zinc-950 pb-nav">
       {seccion === 'inicio'      && <Inicio      onNav={setSeccion} />}
       {seccion === 'horarios'    && <Horarios />}
       {seccion === 'planes'      && <Planes      onNav={setSeccion} />}
