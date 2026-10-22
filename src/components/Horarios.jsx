@@ -55,9 +55,9 @@ export default function Horarios() {
           <button
             key={d}
             onClick={() => setDiaActivo(i)}
-            className={`shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-all
+            className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95
               ${diaActivo === i
-                ? 'bg-yellow-400 text-zinc-950'
+                ? 'bg-yellow-400 text-zinc-950 shadow-md shadow-yellow-900/30'
                 : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
               }`}
           >
@@ -73,10 +73,11 @@ export default function Horarios() {
         ) : clasesDelDia.length === 0 ? (
           <p className="text-zinc-500 text-center py-10">Sin clases este día</p>
         ) : (
-          clasesDelDia.map((clase) => (
+          clasesDelDia.map((clase, i) => (
             <div
               key={clase.id}
-              className={`flex items-center gap-3 bg-zinc-900 rounded-xl p-3 border-l-4 clase-${clase.tipo}`}
+              className={`animate-fade-in-up flex items-center gap-3 bg-zinc-900 rounded-xl p-3 border-l-4 clase-${clase.tipo}`}
+              style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="text-center min-w-[60px]">
                 <p className="text-yellow-400 font-bold text-sm leading-tight">{clase.hora}</p>

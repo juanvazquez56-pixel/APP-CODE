@@ -98,14 +98,15 @@ export default function Inicio({ onNav }) {
           {!cargando && anuncios.length === 0 && (
             <p className="text-zinc-600 text-sm">Todavía no hay anuncios.</p>
           )}
-          {anuncios.map(a => (
+          {anuncios.map((a, i) => (
             <div
               key={a.id}
-              className={`rounded-xl p-4 border
+              className={`animate-fade-in-up tap-card rounded-xl p-4 border
                 ${a.destacado
                   ? 'bg-yellow-500/10 border-yellow-500/40'
                   : 'bg-zinc-900 border-zinc-800'
                 }`}
+              style={{ animationDelay: `${i * 0.07}s` }}
             >
               <div className="flex items-start justify-between gap-2">
                 <h3 className={`font-bold text-base leading-tight
@@ -132,16 +133,18 @@ export default function Inicio({ onNav }) {
       <div className="px-4 pt-2 pb-6 grid grid-cols-2 gap-3">
         <button
           onClick={() => onNav('horarios')}
-          className="flex flex-col items-center gap-2 bg-zinc-900 border border-zinc-800
-            hover:border-yellow-500/50 rounded-xl p-4 transition-colors"
+          className="animate-fade-in-up tap-card flex flex-col items-center gap-2 bg-zinc-900 border border-zinc-800
+            hover:border-yellow-500/50 rounded-2xl p-4"
+          style={{ animationDelay: '0.08s' }}
         >
           <span className="text-2xl">🕐</span>
           <span className="text-sm font-semibold text-zinc-300">Ver Horarios</span>
         </button>
         <button
           onClick={() => onNav('planes')}
-          className="flex flex-col items-center gap-2 bg-zinc-900 border border-zinc-800
-            hover:border-yellow-500/50 rounded-xl p-4 transition-colors"
+          className="animate-fade-in-up tap-card flex flex-col items-center gap-2 bg-zinc-900 border border-zinc-800
+            hover:border-yellow-500/50 rounded-2xl p-4"
+          style={{ animationDelay: '0.14s' }}
         >
           <span className="text-2xl">💰</span>
           <span className="text-sm font-semibold text-zinc-300">Ver Planes</span>

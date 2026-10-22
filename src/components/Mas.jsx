@@ -13,13 +13,13 @@ export default function Mas({ onNav }) {
       <p className="text-zinc-500 text-xs mb-5 tracking-wide">Otras secciones de la app</p>
 
       <div className="flex flex-col gap-2">
-        {masAccesos.map(acceso => (
+        {masAccesos.map((acceso, i) => (
           <button
             key={acceso.id}
             onClick={() => onNav(acceso.id)}
-            className="flex items-center gap-4 bg-zinc-900 border border-zinc-800
-              hover:border-yellow-500/50 active:scale-[0.98] rounded-xl p-4
-              transition-all text-left"
+            className="animate-fade-in-up tap-card flex items-center gap-4 bg-zinc-900 border border-zinc-800
+              hover:border-yellow-500/50 rounded-2xl p-4 text-left"
+            style={{ animationDelay: `${i * 0.06}s` }}
           >
             <span className="text-2xl shrink-0">{acceso.emoji}</span>
             <div className="flex-1 min-w-0">

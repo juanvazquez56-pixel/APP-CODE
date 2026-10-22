@@ -37,11 +37,12 @@ export default function Planes({ onNav }) {
         {c.planes.map((plan, i) => (
           <div
             key={i}
-            className={`relative rounded-2xl border overflow-hidden
+            className={`animate-fade-in-up tap-card relative rounded-2xl border overflow-hidden
               ${plan.popular
                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-950/60 to-zinc-900'
                 : 'border-zinc-800 bg-zinc-900'
               }`}
+            style={{ animationDelay: `${i * 0.08}s` }}
           >
             {plan.popular && (
               <div className="bg-yellow-400 text-zinc-950 text-xs font-black uppercase tracking-widest
