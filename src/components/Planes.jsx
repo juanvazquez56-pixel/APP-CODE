@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import content from '../content'
+import { supabase } from '../supabaseClient'
 import Calculadora from './Calculadora'
 
 function whatsappPlan(c, plan) {
@@ -9,7 +10,28 @@ function whatsappPlan(c, plan) {
 
 export default function Planes({ onNav }) {
   const c = content
+  const [planes, setPlanes]               = useState(null) // null = cargando
   const [mostrarCalculadora, setMostrarCalculadora] = useState(false)
+
+  useEffect(() => {
+    async function cargar() {
+      const { data, error } = await supabase
+        .from('planes')
+        .select('*')
+        .eq('activo', true)
+        .order('orden')
+      // Si hay datos válidos los usa; si no, cae al respaldo de content.js
+      if (!error && data && data.length > 0) {
+        setPlanes(data)
+      } else {
+        setPlanes(content.planes)
+      }
+    }
+    cargar()
+  }, [])
+
+  // Mientras carga muestra los de content.js (evita pantalla en blanco)
+  const planesToShow = planes ?? content.planes
 
   return (
     <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
@@ -23,20 +45,23 @@ export default function Planes({ onNav }) {
         onClick={() => setMostrarCalculadora(true)}
         className="mb-5 flex items-center justify-center gap-2 w-full py-4 rounded-2xl
           bg-gradient-to-r from-yellow-500 to-yellow-400 text-zinc-950 font-bold text-sm
-          shadow-lg shadow-yellow-900/30 transition-all active:scale-96"
+          shadow-lg shadow-yellow-900/30 transition-all active:scale-[0.98]"
       >
-        <span className="text-lg"></span >
+        <span className="text-lg">🧮</span>
         ¿NO SABES CUÁL ELEGIR? CALCULA TU PLAN IDEAL
       </button>
 
       {mostrarCalculadora && (
-        <Calculadora onClose={() => setMostrarCalculadora(false)} />
+        <Calculadora
+          planes={planesToShow}
+          onClose={() => setMostrarCalculadora(false)}
+        />
       )}
 
       <div className="flex flex-col gap-4">
-        {c.planes.map((plan, i) => (
+        {planesToShow.map((plan, i) => (
           <div
-            key={i}
+            key={plan.id ?? i}
             className={`animate-fade-in-up tap-card relative rounded-2xl border overflow-hidden
               ${plan.popular
                 ? 'border-yellow-400 bg-gradient-to-br from-yellow-950/60 to-zinc-900'
@@ -76,7 +101,7 @@ export default function Planes({ onNav }) {
               <p className="text-zinc-400 text-sm mb-3 leading-relaxed">{plan.descripcion}</p>
 
               <ul className="flex flex-col gap-1.5 mb-4">
-                {plan.incluye.map((item, j) => (
+                {(plan.incluye ?? []).map((item, j) => (
                   <li key={j} className="flex items-center gap-2 text-sm text-zinc-300">
                     <span className={`text-base ${plan.popular ? 'text-yellow-400' : 'text-green-500'}`}>✓</span>
                     {item}

@@ -1,12 +1,16 @@
 import { useState } from 'react'
 import content from '../content'
 
-export default function Calculadora({ onClose }) {
-  const { calculadora, planes, contacto } = content
+// planes: prop opcional con los planes actuales (de Supabase).
+// Si no se pasa, usa los de content.js como respaldo.
+export default function Calculadora({ onClose, planes: planesProps }) {
+  const { calculadora, contacto } = content
+  const planes = planesProps ?? content.planes
   const [quien, setQuien] = useState(null)
   const [objetivo, setObjetivo] = useState(null)
   const [gym, setGym] = useState(null)
-  const [resultado, setResultado] = useState(null)
+  // undefined = aún no calculado | null = regla no encontró plan | objeto = plan recomendado
+  const [resultado, setResultado] = useState(undefined)
 
   function buscarPlan(q, o, g) {
     const regla = calculadora.reglas.find(r =>
@@ -40,7 +44,7 @@ export default function Calculadora({ onClose }) {
     setQuien(null)
     setObjetivo(null)
     setGym(null)
-    setResultado(null)
+    setResultado(undefined)
   }
 
   const mostrarP2 = quien && calculadora.pregunta2.soloSiInteresEs.includes(quien) && !objetivo
@@ -50,7 +54,7 @@ export default function Calculadora({ onClose }) {
     ? `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent(
         `Hola, hice la calculadora de plan ideal y me recomendo ${resultado.nombre}. Quiero inscribirme.`
       )}`
-    : '#'
+    : `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent('Hola, me gustaría información sobre los planes de NK BOX.')}`
 
   return (
     <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center p-4" onClick={onClose}>
@@ -67,23 +71,33 @@ export default function Calculadora({ onClose }) {
           </button>
         </div>
 
-        {resultado ? (
+        {resultado !== undefined ? (
           <div>
-            <p className="text-zinc-400 text-sm mb-3">Con base en tus respuestas, te recomendamos:</p>
-            <div className="rounded-xl border border-yellow-400 bg-gradient-to-br from-yellow-950/60 to-zinc-900 p-4 mb-4">
-              <p className="font-display text-2xl font-black uppercase text-yellow-400">{resultado.nombre}</p>
-              <p className="text-white text-2xl font-black mt-1">
-                {resultado.precio}<span className="text-zinc-500 text-sm">{resultado.periodo}</span>
-              </p>
-              <p className="text-zinc-400 text-sm mt-2">{resultado.descripcion}</p>
-            </div>
+            {resultado === null ? (
+              /* Plan recomendado no existe o está oculto */
+              <div className="bg-zinc-800 border border-zinc-700 rounded-xl p-4 mb-4 text-center">
+                <p className="text-zinc-300 text-sm font-semibold mb-1">Plan no disponible</p>
+                <p className="text-zinc-500 text-xs">El plan recomendado no está activo en este momento. Contáctanos y te orientamos.</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-zinc-400 text-sm mb-3">Con base en tus respuestas, te recomendamos:</p>
+                <div className="rounded-xl border border-yellow-400 bg-gradient-to-br from-yellow-950/60 to-zinc-900 p-4 mb-4">
+                  <p className="font-display text-2xl font-black uppercase text-yellow-400">{resultado.nombre}</p>
+                  <p className="text-white text-2xl font-black mt-1">
+                    {resultado.precio}<span className="text-zinc-500 text-sm">{resultado.periodo}</span>
+                  </p>
+                  <p className="text-zinc-400 text-sm mt-2">{resultado.descripcion}</p>
+                </div>
+              </>
+            )}
             <a
               href={waUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="block text-center py-3 rounded-xl font-bold text-sm bg-green-500 hover:bg-green-400 text-white transition-all active:scale-95 mb-2"
             >
-              Inscribirme por WhatsApp
+              Hablar por WhatsApp
             </a>
             <button
               onClick={reiniciar}
