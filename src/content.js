@@ -452,6 +452,12 @@ calculadora: {
       descripcion: "Nuestros alumnos destacados",
     },
     {
+      id: "ruta",
+      label: "Tu ruta",
+      emoji: "🥊",
+      descripcion: "De cero a competidor · Las 4 fases del plan",
+    },
+    {
       id: "menumaestro",
       label: "Menú Maestro",
       emoji: "🔑",
