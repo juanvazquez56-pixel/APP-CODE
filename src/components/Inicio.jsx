@@ -149,6 +149,18 @@ export default function Inicio({ onNav }) {
           <span className="text-2xl">💰</span>
           <span className="text-sm font-semibold text-zinc-300">Ver Planes</span>
         </button>
+        <button
+          onClick={() => onNav('ruta')}
+          className="animate-fade-in-up tap-card col-span-2 flex flex-row items-center justify-center gap-3
+            bg-zinc-900 border border-yellow-500/30 hover:border-yellow-500/60 rounded-2xl p-4"
+          style={{ animationDelay: '0.20s' }}
+        >
+          <span className="text-2xl">🥊</span>
+          <div className="text-left">
+            <p className="text-sm font-bold text-yellow-400">Tu ruta</p>
+            <p className="text-xs text-zinc-500">De cero a competidor · 4 fases</p>
+          </div>
+        </button>
       </div>
     </div>
   )

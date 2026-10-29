@@ -535,6 +535,191 @@ calculadora: {
     // Agrega más campeones aquí siguiendo el mismo formato:
     // { foto: "/campeon4.jpg", nombre: "Nombre completo", logro: "Su logro destacado" },
   ],
+
+  // ----------------------------------------------------------
+  // TU RUTA · Plan de desarrollo de cero a competidor
+  // ----------------------------------------------------------
+  // Cómo editar:
+  //   - whatsapp / waMensaje: número y texto para el botón verde al pie.
+  //   - fases: cada objeto es una pestaña. Cambia meta, bloques (titulo + items[]),
+  //     sparring, sparringNota, fisico y examen (o meta_final en la fase 4).
+  //   - semana: 5 días fijos. dia, descripcion, intensidad y nivel (1-3 puntos).
+  //   - sesion: bloques de la sesión de 75-90 min. peso es el tamaño relativo
+  //     en la barra visual (no tiene que sumar 100, es proporcional).
+  //     color es hex para el acento de ese bloque.
+  //   - golpes: los 8 golpes NK. clase: "recto" | "curvo" | "uppercut" | "cuerpo"
+  //     define el color del número.
+  //   - seguridad: equipo[], reglas[], alerta (texto rojo), cuidado[].
+  // ----------------------------------------------------------
+  ruta: {
+    whatsapp: "527206771174",
+    waMensaje: "Hola, quiero saber en qué fase del plan me toca empezar.",
+
+    hero: {
+      eyebrow: "NK BOX · Plan de desarrollo",
+      titulo: "De cero a competidor",
+      subtitulo: "Tu camino paso a paso, sin saltarte nada.",
+      stats: [
+        { valor: "4",     etiqueta: "fases" },
+        { valor: "3",     etiqueta: "exámenes" },
+        { valor: "12–18", etiqueta: "meses" },
+      ],
+    },
+
+    regla: "Subes de fase por examen, no por tiempo. Los meses son el mínimo. Si no apruebas, el entrenador te dice qué corregir y vuelves a presentar en la siguiente ceremonia de promociones.",
+
+    fases: [
+      {
+        n: 1, nombre: "Fundamentos", cuando: "Meses 1–3", tag: "Mínimo 3 meses",
+        color: "#22c55e",
+        meta: "Pararte, moverte y lanzar los golpes rectos con técnica correcta sin perder la guardia.",
+        bloques: [
+          { titulo: "Mes 1 · Base", items: [
+            "Guardia, postura y distancia; moverte adelante, atrás y a los lados sin cruzar los pies.",
+            "Golpes 1 y 2 en sombra, espejo y costal.",
+            "Combinaciones: 1, 1-1, 1-2.",
+            "Defensa: parada con el guante y paso atrás.",
+          ]},
+          { titulo: "Mes 2 · Golpes curvos", items: [
+            "Golpes 3 y 6 (volados) y 4 y 7 (uppercuts) con giro de cadera y pie.",
+            "Combinaciones: 1-2-3, 1-2-3-2, 1-6, 3-2.",
+            "Defensa: rol contra volados y slip contra rectos. Pivotes a ambos lados.",
+          ]},
+          { titulo: "Mes 3 · Integración", items: [
+            "Golpes 5 y 8 al cuerpo, con bajada de nivel correcta.",
+            "Combinaciones de 3 a 4 golpes: 1-2-5-3, 1-8-3-2.",
+            "Manoplas con el entrenador, a la voz y por número.",
+          ]},
+        ],
+        sparring: "Ninguno", sparringNota: "Cero sparring en esta fase.",
+        fisico: "Cuerda 3×3 min y trote suave de 20 min, 2 veces por semana fuera de clase.",
+        examen: { para: 2, filas: [
+          ["Técnica", "Sombra de 2 min con los 8 golpes y guardia limpia; 1-2-3-2 y 1-8-3-2 en manopla a la voz."],
+          ["Físico",  "3 rounds de cuerda sin parar."],
+          ["Actitud", "85 % de asistencia durante la fase."],
+        ]},
+      },
+      {
+        n: 2, nombre: "Intermedio", cuando: "Meses 4–6", tag: "Meses 4 a 6",
+        color: "#3b82f6",
+        meta: "Defender y contestar en el mismo movimiento, y empezar a usar tu técnica contra alguien que se mueve.",
+        bloques: [
+          { titulo: "Técnica", items: [
+            "Defensa con respuesta: slip + 2, rol + 3, bloqueo + 1-2, paso atrás + 2.",
+            "Fintas con jab y con el hombro; cambio de ritmo.",
+            "Salir de esquinas y cuerdas con pivote o paso lateral, nunca en línea recta hacia atrás.",
+            "Combinaciones de 4 a 6 golpes con salida.",
+            "Control de distancia: larga (jab), media (combinaciones) y corta (cuerpo y uppercuts).",
+          ]},
+          { titulo: "Con pareja", items: [
+            "Uno solo ataca con 1 y 2 y el otro solo defiende; luego invierten.",
+            "Un solo objetivo: solo cuerpo o solo jab, a 30–40 % de potencia.",
+            "Manoplas donde el entrenador tira y tú defiendes y respondes.",
+          ]},
+        ],
+        sparring: "Condicionado · 30–40 %", sparringNota: "1 vez por semana (jueves), 3–4 rounds. Menores: máx. 3 rounds de 2 min.",
+        fisico: "Intervalos en costal (30 s rápido / 30 s suave × 6) y circuitos de 3 rondas.",
+        examen: { para: 3, filas: [
+          ["Técnica", "Defensa + respuesta en 4 situaciones (slip, rol, bloqueo, paso atrás) y salir de una esquina."],
+          ["Físico",  "6 rounds seguidos de costal."],
+          ["Actitud", "Sparring condicionado sin perder el control."],
+        ]},
+      },
+      {
+        n: 3, nombre: "Avanzado", cuando: "Meses 7–12", tag: "Meses 7 a 12",
+        color: "#ef4444",
+        meta: "Pelear con un plan, adaptarte a distintos rivales y aguantar 3 rounds completos a ritmo de torneo.",
+        bloques: [
+          { titulo: "Técnica y táctica", items: [
+            "Pelear al frente (presión), a distancia (contragolpe) y saber cambiar entre ambos.",
+            "Contra zurdos y contra derechos: posición del pie adelantado y ángulos de salida.",
+            "Anticipar el jab rival con un 2 o con un 5.",
+            "Clinch amateur: cómo romperlo y salir golpeando.",
+            "Administrar el round: ganar los últimos 30 segundos.",
+          ]},
+          { titulo: "Con pareja", items: [
+            "Sparring con distintos compañeros: más alto, más bajo, zurdo, más pesado.",
+            "Rounds de situación: 'vas perdiendo, quedan 40 segundos', 'estás contra las cuerdas'.",
+            "Revisión en video de un sparring al mes, con correcciones.",
+          ]},
+        ],
+        sparring: "Controlado · 50–70 %", sparringNota: "Martes y jueves, 4–6 rounds. Menores: solo técnico, máx. 4 rounds.",
+        fisico: "Rounds de costal a ritmo de pelea, carrera con cambios de ritmo y fuerza con carga moderada (adultos).",
+        examen: { para: 4, filas: [
+          ["Técnica",   "3 rounds de sparring controlado mostrando plan, ajuste y manejo de distancia."],
+          ["Físico",    "3 rounds de pelea simulada a ritmo de torneo, con buena recuperación en el minuto."],
+          ["Requisito", "Certificado médico de aptitud deportiva; permiso firmado del tutor en menores."],
+        ]},
+      },
+      {
+        n: 4, nombre: "Competidor", cuando: "Mes 12+", tag: "Mes 12 en adelante",
+        color: "#fbbf24",
+        meta: "Ganar experiencia de torneo con un campamento de 8 semanas antes de cada pelea.",
+        bloques: [
+          { titulo: "Campamento de 8 semanas", items: [
+            "Semanas 1–2 · Base: volumen aeróbico, correcciones técnicas y fuerza general.",
+            "Semanas 3–5 · Específico: plan de pelea según tu rival e intervalos de alta intensidad.",
+            "Semanas 6–7 · Afinación: velocidad, precisión y rounds simulados de torneo.",
+            "Semana 8 · Descarga: volumen bajo, técnica ligera, peso y descanso.",
+          ]},
+          { titulo: "Tu rutina de competidor", items: [
+            "Control de peso cada semana, sin cortes bruscos (menos en menores).",
+            "Después de cada pelea: 1 semana de recuperación activa y revisión del video.",
+          ]},
+        ],
+        sparring: "De campamento · hasta 80 %", sparringNota: "6–8 rounds. Sin sparring los últimos 5–7 días antes de pelear. Menores: sin llegar a 80 %, máx. 5 rounds.",
+        fisico: "Según el bloque del campamento: potencia y mantener la fuerza.",
+        examen: null,
+        metaFinal: "Competir en torneos amateur avalados por la asociación estatal.",
+      },
+    ],
+
+    semana: [
+      { dia: "LUN", descripcion: "Técnica de ataque: golpes y combinaciones nuevas", intensidad: "Media",      nivel: 2 },
+      { dia: "MAR", descripcion: "Defensa y contraataque",                           intensidad: "Media",      nivel: 2 },
+      { dia: "MIÉ", descripcion: "Acondicionamiento y costal pesado",                intensidad: "Alta",       nivel: 3 },
+      { dia: "JUE", descripcion: "Trabajo con pareja: manoplas, ejercicios condicionados y sparring (desde Fase 2)", intensidad: "Alta", nivel: 3 },
+      { dia: "VIE", descripcion: "Repaso de la semana, juego de piernas y prueba técnica rápida", intensidad: "Media-baja", nivel: 1 },
+    ],
+
+    // peso: tamaño relativo en la barra visual (proporcional, no suma 100)
+    sesion: [
+      { nombre: "Calentamiento y movilidad",        duracion: "10 min",    peso: 10, color: "#22c55e" },
+      { nombre: "Sombra guiada (3 rounds)",          duracion: "~9 min",    peso:  9, color: "#3b82f6" },
+      { nombre: "Bloque técnico principal",          duracion: "25–30 min", peso: 27, color: "#fbbf24" },
+      { nombre: "Aplicación: costal, manoplas o sparring", duracion: "15–20 min", peso: 17, color: "#ef4444" },
+      { nombre: "Acondicionamiento",                 duracion: "10–15 min", peso: 12, color: "#c084fc" },
+      { nombre: "Enfriamiento y estiramiento",       duracion: "5–10 min",  peso:  7, color: "#a1a1aa" },
+    ],
+
+    // clase: "recto" | "curvo" | "uppercut" | "cuerpo"  (define el color del número)
+    golpes: [
+      { numero: 1, nombre: "Jab",               clase: "recto"   },
+      { numero: 2, nombre: "Cross",              clase: "recto"   },
+      { numero: 3, nombre: "Volado izq.",        clase: "curvo"   },
+      { numero: 4, nombre: "Uppercut der.",      clase: "uppercut"},
+      { numero: 5, nombre: "Gancho al hígado izq.", clase: "cuerpo" },
+      { numero: 6, nombre: "Volado der.",        clase: "curvo"   },
+      { numero: 7, nombre: "Uppercut izq.",      clase: "uppercut"},
+      { numero: 8, nombre: "Golpe a la panza",   clase: "cuerpo"  },
+    ],
+
+    seguridad: {
+      equipo: ["Careta", "Protector bucal", "Vendas", "Guantes 14–16 oz", "Concha"],
+      reglas: [
+        "Siempre con un entrenador en el ring, nunca sin supervisión.",
+        "Parejas de peso y nivel parecidos. Menores nunca con adultos.",
+        "El entrenador para el round ante un golpe fuerte a la cabeza o si pierdes la guardia por cansancio.",
+      ],
+      alerta: "Mareo, dolor de cabeza, náusea o visión borrosa. Se detiene la sesión, no regresas ese día y necesitas valoración médica antes de volver al contacto.",
+      cuidado: [
+        "Fin de semana libre o con actividad ligera.",
+        "Juveniles: duerme 8–10 horas y toma agua toda la sesión.",
+        "Para y avisa si tienes dolor articular que no cede o cansancio de varios días.",
+        "Menores de 16: sin cargas máximas ni peso en el cuello.",
+      ],
+    },
+  },
 };
 
 export default content;
