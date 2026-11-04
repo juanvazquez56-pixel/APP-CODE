@@ -29,13 +29,13 @@ export default function POSCorte() {
     setDesde(inicio)
 
     const [{ data: ventas, error: ev }, { data: retiros, error: er }] = await Promise.all([
-      supabase.from('ventas').select('total, metodo_pago').gt('created_at', inicio),
-      supabase.from('retiros').select('monto, metodo_pago').gt('created_at', inicio),
+      supabase.from('ventas').select('total, metodo_pago').gt('created_at', inicio).eq('anulada', false),
+      supabase.from('retiros').select('monto, metodo_pago').gt('created_at', inicio).eq('anulada', false),
     ])
     if (ev || er) { setError('Error al calcular: ' + (ev || er).message); setCargando(false); return }
 
-    const vEf = ventas.filter(v => v.metodo_pago === 'Efectivo').reduce((s, v) => s + Number(v.total), 0)
-    const rEf = retiros.filter(r => r.metodo_pago === 'Efectivo').reduce((s, r) => s + Number(r.monto), 0)
+    const vEf = ventas.filter(v => v.metodo_pago === 'efectivo').reduce((s, v) => s + Number(v.total), 0)
+    const rEf = retiros.filter(r => r.metodo_pago === 'efectivo').reduce((s, r) => s + Number(r.monto), 0)
     setVentasEf(vEf)
     setRetirosEf(rEf)
     setTotalVentas(ventas.reduce((s, v) => s + Number(v.total), 0))

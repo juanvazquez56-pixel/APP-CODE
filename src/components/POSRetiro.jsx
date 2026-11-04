@@ -1,15 +1,15 @@
 import { useState } from 'react'
 import { supabase } from '../supabaseClient'
+import { METODOS_RETIRO, metodoLabel } from '../posConfig'
 
 const TIPOS = ['nomina', 'gasto']
-const METODOS = ['Efectivo', 'Débito', 'Crédito', 'Transferencia']
 
 export default function POSRetiro() {
   const [tipo, setTipo] = useState('nomina')
   const [concepto, setConcepto] = useState('')
   const [beneficiario, setBeneficiario] = useState('')
   const [monto, setMonto] = useState('')
-  const [metodo, setMetodo] = useState('Efectivo')
+  const [metodo, setMetodo] = useState('efectivo')
   const [guardando, setGuardando] = useState(false)
   const [error, setError] = useState('')
   const [confirmado, setConfirmado] = useState(false)
@@ -46,7 +46,7 @@ export default function POSRetiro() {
     setConcepto('')
     setBeneficiario('')
     setMonto('')
-    setMetodo('Efectivo')
+    setMetodo('efectivo')
     setError('')
     setConfirmado(false)
     setUltimoRetiro(null)
@@ -57,7 +57,7 @@ export default function POSRetiro() {
       <div className="text-5xl mb-4">✅</div>
       <h3 className="font-black text-white text-xl mb-1">Retiro registrado</h3>
       <p className="text-red-400 font-bold text-2xl mb-1">−${Number(ultimoRetiro.monto).toLocaleString('es-MX')}</p>
-      <p className="text-zinc-400 text-sm">{ultimoRetiro.concepto} · {ultimoRetiro.metodo_pago}</p>
+      <p className="text-zinc-400 text-sm">{ultimoRetiro.concepto} · {metodoLabel(ultimoRetiro.metodo_pago)}</p>
       <p className="text-zinc-500 text-xs mt-1 capitalize">{ultimoRetiro.tipo}</p>
       <button onClick={nuevo}
         className="mt-8 bg-zinc-800 text-white font-bold py-3 px-8 rounded-2xl active:scale-95 transition-all">
@@ -139,11 +139,11 @@ export default function POSRetiro() {
       <div>
         <label className="text-zinc-400 text-xs uppercase tracking-widest font-bold mb-2 block">Método de pago</label>
         <div className="flex flex-wrap gap-2">
-          {METODOS.map(m => (
-            <button key={m} type="button" onClick={() => setMetodo(m)}
+          {METODOS_RETIRO.map(m => (
+            <button key={m.id} type="button" onClick={() => setMetodo(m.id)}
               className={`px-3 py-2 rounded-xl text-sm font-bold transition-all
-                ${metodo === m ? 'bg-zinc-200 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
-              {m}
+                ${metodo === m.id ? 'bg-zinc-200 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
+              {m.label}
             </button>
           ))}
         </div>

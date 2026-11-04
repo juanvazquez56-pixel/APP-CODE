@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
-
-const METODOS = ['Efectivo', 'Débito', 'Crédito', 'Transferencia', 'Cortesía']
+import { METODOS, metodoLabel } from '../posConfig'
 const CATEGORIAS = ['todos', 'membresia', 'pase', 'bebida', 'equipo']
 
 export default function POSVenta() {
@@ -11,7 +10,7 @@ export default function POSVenta() {
   const [paso, setPaso] = useState('catalogo') // catalogo | detalle | alumno | confirmado
   const [productoSel, setProductoSel] = useState(null)
   const [cantidad, setCantidad] = useState(1)
-  const [metodo, setMetodo] = useState('Efectivo')
+  const [metodo, setMetodo] = useState('efectivo')
   const [alumnos, setAlumnos] = useState([])
   const [busqueda, setBusqueda] = useState('')
   const [alumnoSel, setAlumnoSel] = useState(null)
@@ -39,7 +38,7 @@ export default function POSVenta() {
   function seleccionarProducto(p) {
     setProductoSel(p)
     setCantidad(1)
-    setMetodo('Efectivo')
+    setMetodo('efectivo')
     setAlumnoSel(null)
     setBusqueda('')
     setAlumnos([])
@@ -167,10 +166,10 @@ export default function POSVenta() {
       <label className="text-zinc-400 text-xs uppercase tracking-widest font-bold mb-2 block">Método de pago</label>
       <div className="flex flex-wrap gap-2 mb-5">
         {METODOS.map(m => (
-          <button key={m} onClick={() => setMetodo(m)}
+          <button key={m.id} onClick={() => setMetodo(m.id)}
             className={`px-3 py-2 rounded-xl text-sm font-bold transition-all active:scale-95
-              ${metodo === m ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
-            {m}
+              ${metodo === m.id ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
+            {m.label}
           </button>
         ))}
       </div>
@@ -263,7 +262,7 @@ export default function POSVenta() {
       <div className="text-5xl mb-4">✅</div>
       <h3 className="font-black text-white text-xl mb-1">¡Venta registrada!</h3>
       <p className="text-yellow-400 font-bold text-2xl mb-1">${(ultimaVenta.total).toLocaleString('es-MX')}</p>
-      <p className="text-zinc-400 text-sm mb-1">{ultimaVenta.concepto} · {ultimaVenta.metodo_pago}</p>
+      <p className="text-zinc-400 text-sm mb-1">{ultimaVenta.concepto} · {metodoLabel(ultimaVenta.metodo_pago)}</p>
       {ultimaVenta.es_alta === true && <p className="text-green-400 text-xs font-bold mt-1">🆕 Alta nueva</p>}
       {ultimaVenta.es_alta === false && <p className="text-blue-400 text-xs font-bold mt-1">🔄 Renovación</p>}
       <button onClick={nuevaVenta}
