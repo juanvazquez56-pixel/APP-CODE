@@ -4,7 +4,19 @@ import AdminAnuncios from './AdminAnuncios'
 import AdminHorarios from './AdminHorarios'
 import AdminPlanes from './AdminPlanes'
 
+import { usePermisos } from '../usePermisos'
+
 const POS = lazy(() => import('./POS'))
+const POSAjustes = lazy(() => import('./POSAjustes'))
+
+const TABS = [
+  { id: 'anuncios', label: 'Anuncios' },
+  { id: 'horarios', label: 'Horarios' },
+  { id: 'planes', label: 'Planes' },
+  { id: 'pos', label: 'POS' },
+  { id: 'ajustes', label: '⚙️ Ajustes' },
+]
+const PERMISOS_POS = ['venta', 'retiro', 'corte', 'movimientos', 'productos', 'reportes']
 
 export default function MenuMaestro({ onNav }) {
   const [session, setSession] = useState(null)
@@ -13,6 +25,7 @@ export default function MenuMaestro({ onNav }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [tab, setTab] = useState('anuncios')
+  const permisos = usePermisos(session)
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -93,29 +106,56 @@ export default function MenuMaestro({ onNav }) {
       <h2 className="font-display text-2xl font-black uppercase tracking-widest text-yellow-400 mb-1">
         Menú Maestro
       </h2>
-      <p className="text-zinc-500 text-xs mb-4 tracking-wide">Conectado como {session.user.email}</p>
+      <p className="text-zinc-500 text-xs mb-4 tracking-wide">
+        Conectado como {session.user.email}
+        {!permisos.cargando && !permisos.sinConfigurar && (
+          <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase
+            ${permisos.rol === 'admin' ? 'bg-yellow-400/15 text-yellow-400' : 'bg-zinc-800 text-zinc-300'}`}>
+            {permisos.rol === 'admin' ? 'Admin' : 'Recepción'}
+          </span>
+        )}
+      </p>
 
-      <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide">
-        {['anuncios', 'horarios', 'planes', 'pos'].map(t => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95
-              ${tab === t ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}
-          >
-            {t === 'pos' ? 'POS' : t.charAt(0).toUpperCase() + t.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {tab === 'anuncios' && <AdminAnuncios />}
-      {tab === 'horarios' && <AdminHorarios />}
-      {tab === 'planes'   && <AdminPlanes />}
-      {tab === 'pos' && (
-        <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando POS...</p>}>
-          <POS />
-        </Suspense>
+      {permisos.sinConfigurar && (
+        <p className="text-yellow-600 text-xs mb-4">
+          Cuentas admin/recepción sin activar: corre supabase/pos_roles.sql en Supabase.
+        </p>
       )}
+
+      {permisos.cargando ? (
+        <p className="text-zinc-500 text-sm">Cargando...</p>
+      ) : (() => {
+        const visibles = TABS.filter(t =>
+          t.id === 'ajustes' ? permisos.rol === 'admin' && !permisos.sinConfigurar
+          : t.id === 'pos' ? PERMISOS_POS.some(p => permisos.puede(p))
+          : permisos.puede(t.id))
+        const activa = visibles.some(t => t.id === tab) ? tab : visibles[0]?.id
+        if (!activa) return <p className="text-zinc-500 text-sm">Tu cuenta todavía no tiene permisos. Pide al admin que te los active.</p>
+        return (
+          <>
+            <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide">
+              {visibles.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setTab(t.id)}
+                  className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95
+                    ${activa === t.id ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
+            {activa === 'anuncios' && <AdminAnuncios />}
+            {activa === 'horarios' && <AdminHorarios />}
+            {activa === 'planes'   && <AdminPlanes />}
+            <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando...</p>}>
+              {activa === 'pos'     && <POS puede={permisos.puede} />}
+              {activa === 'ajustes' && <POSAjustes onPermisosCambiados={permisos.recargar} />}
+            </Suspense>
+          </>
+        )
+      })()}
 
       <button
         onClick={handleLogout}

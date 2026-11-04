@@ -43,7 +43,7 @@ async function traerTodo(consulta) {
   }
 }
 
-export default function POSMovimientos() {
+export default function POSMovimientos({ puedeEditar = true }) {
   const [[desde, hasta], setRango] = useState(rangoRapido('hoy'))
   const [tipo, setTipo] = useState('todos')
   const [metodo, setMetodo] = useState('todos')
@@ -222,7 +222,7 @@ export default function POSMovimientos() {
                   {m.usuario_email?.split('@')[0] ?? '—'}
                 </td>
                 <td className="px-2 py-1 whitespace-nowrap text-right">
-                  {!m.anulada && (
+                  {!m.anulada && puedeEditar && (
                     <>
                       <button onClick={() => setEditando(m)} title="Editar"
                         className="px-2 py-1 rounded-md bg-zinc-800 text-zinc-300 font-bold active:scale-95">Editar</button>
