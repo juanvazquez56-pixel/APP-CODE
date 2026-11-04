@@ -3,38 +3,78 @@ import { supabase } from '../supabaseClient'
 import { METODOS, METODOS_RETIRO, metodoLabel, fmt, SQL_PENDIENTE } from '../posConfig'
 import POSModal, { Etiqueta, inputCls, Chips } from './POSModal'
 
-function hoyISO() {
-  const d = new Date()
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset())
-  return d.toISOString().slice(0, 10)
+function iso(d) {
+  const x = new Date(d)
+  x.setMinutes(x.getMinutes() - x.getTimezoneOffset())
+  return x.toISOString().slice(0, 10)
 }
 
-const hora = iso => new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })
+function rangoRapido(id) {
+  const hoy = new Date()
+  const y = hoy.getFullYear(), m = hoy.getMonth()
+  if (id === 'hoy') return [iso(hoy), iso(hoy)]
+  if (id === 'semana') {
+    const lunes = new Date(hoy)
+    lunes.setDate(hoy.getDate() - ((hoy.getDay() + 6) % 7))
+    return [iso(lunes), iso(hoy)]
+  }
+  if (id === 'mes') return [iso(new Date(y, m, 1)), iso(hoy)]
+  return [iso(new Date(y, m - 1, 1)), iso(new Date(y, m, 0))]
+}
+
+const RAPIDOS = [
+  { id: 'hoy', label: 'Hoy' },
+  { id: 'semana', label: 'Esta semana' },
+  { id: 'mes', label: 'Este mes' },
+  { id: 'mespasado', label: 'Mes pasado' },
+]
+
+const hora = iso => new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })
+const dia = iso => new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' })
+
+// Supabase devuelve máximo 1000 filas por consulta: se pide por páginas.
+async function traerTodo(consulta) {
+  const filas = []
+  for (let desde = 0; ; desde += 1000) {
+    const { data, error } = await consulta().order('id').range(desde, desde + 999)
+    if (error) return { error }
+    filas.push(...data)
+    if (data.length < 1000) return { data: filas }
+  }
+}
 
 export default function POSMovimientos() {
-  const [fecha, setFecha] = useState(hoyISO())
+  const [[desde, hasta], setRango] = useState(rangoRapido('hoy'))
   const [tipo, setTipo] = useState('todos')
   const [metodo, setMetodo] = useState('todos')
   const [busqueda, setBusqueda] = useState('')
+  const [verAnuladas, setVerAnuladas] = useState(true)
   const [movs, setMovs] = useState([])
   const [cargando, setCargando] = useState(true)
   const [error, setError] = useState('')
   const [editando, setEditando] = useState(null)
   const [anulando, setAnulando] = useState(null)
 
-  useEffect(() => { cargar() }, [fecha])
+  useEffect(() => { cargar() }, [desde, hasta])
+
+  function cambiarFecha(campo, valor) {
+    if (!valor) return
+    let d = campo === 'desde' ? valor : desde
+    let h = campo === 'hasta' ? valor : hasta
+    if (d > h) [d, h] = campo === 'desde' ? [d, d] : [h, h]
+    setRango([d, h])
+  }
 
   async function cargar() {
     setCargando(true)
     setError('')
-    const inicio = new Date(`${fecha}T00:00:00`)
-    const fin = new Date(inicio)
-    fin.setDate(fin.getDate() + 1)
+    const inicio = new Date(`${desde}T00:00:00`).toISOString()
+    const finD = new Date(`${hasta}T00:00:00`)
+    finD.setDate(finD.getDate() + 1)
+    const fin = finD.toISOString()
     const [v, r] = await Promise.all([
-      supabase.from('ventas').select('*, alumnos(nombre)')
-        .gte('created_at', inicio.toISOString()).lt('created_at', fin.toISOString()),
-      supabase.from('retiros').select('*')
-        .gte('created_at', inicio.toISOString()).lt('created_at', fin.toISOString()),
+      traerTodo(() => supabase.from('ventas').select('*, alumnos(nombre)').gte('created_at', inicio).lt('created_at', fin)),
+      traerTodo(() => supabase.from('retiros').select('*').gte('created_at', inicio).lt('created_at', fin)),
     ])
     if (v.error || r.error) {
       setError('Error al cargar: ' + (v.error || r.error).message)
@@ -50,6 +90,7 @@ export default function POSMovimientos() {
 
   const q = busqueda.trim().toLowerCase()
   const filtrados = movs.filter(m =>
+    (verAnuladas || !m.anulada) &&
     (tipo === 'todos' || m._tipo === tipo) &&
     (metodo === 'todos' || m.metodo_pago === metodo) &&
     (!q || [m.concepto, m._quien].some(s => s?.toLowerCase().includes(q))))
@@ -61,87 +102,139 @@ export default function POSMovimientos() {
   const porMetodo = METODOS
     .map(mt => ({ ...mt, total: suma(validos.filter(m => m._tipo === 'venta' && m.metodo_pago === mt.id)) }))
     .filter(x => x.total > 0)
+  const rapidoActivo = RAPIDOS.find(r => { const [d, h] = rangoRapido(r.id); return d === desde && h === hasta })?.id
+
+  const selCls = 'bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1.5 text-white text-xs'
 
   return (
-    <div className="flex flex-col gap-4">
-      <h3 className="font-bold text-white text-base">Movimientos</h3>
+    <div className="flex flex-col gap-3">
+      {/* Rango de fechas */}
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="flex flex-col gap-0.5">
+          <span className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Desde</span>
+          <input type="date" value={desde} max={hasta} onChange={e => cambiarFecha('desde', e.target.value)}
+            className={selCls} style={{ colorScheme: 'dark' }} />
+        </label>
+        <label className="flex flex-col gap-0.5">
+          <span className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold">Hasta</span>
+          <input type="date" value={hasta} min={desde} onChange={e => cambiarFecha('hasta', e.target.value)}
+            className={selCls} style={{ colorScheme: 'dark' }} />
+        </label>
+        <div className="flex flex-wrap gap-1.5">
+          {RAPIDOS.map(r => (
+            <button key={r.id} onClick={() => setRango(rangoRapido(r.id))}
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-bold active:scale-95
+                ${rapidoActivo === r.id ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
+              {r.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Filtros */}
-      <div className="flex flex-col gap-2">
-        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)}
-          className={inputCls} style={{ colorScheme: 'dark' }} />
-        <input placeholder="Buscar alumno, concepto o beneficiario..." value={busqueda}
-          onChange={e => setBusqueda(e.target.value)} className={inputCls} />
-        <Chips valor={tipo} onChange={setTipo} activoCls="bg-zinc-100 text-zinc-950"
-          opciones={[{ id: 'todos', label: 'Todo' }, { id: 'venta', label: 'Ventas' }, { id: 'retiro', label: 'Retiros' }]} />
-        <Chips valor={metodo} onChange={setMetodo} activoCls="bg-zinc-100 text-zinc-950"
-          opciones={[{ id: 'todos', label: 'Todos los métodos' }, ...METODOS]} />
+      <div className="flex flex-wrap gap-2">
+        <input placeholder="Buscar alumno, concepto..." value={busqueda}
+          onChange={e => setBusqueda(e.target.value)} className={`${selCls} flex-1 min-w-[160px]`} />
+        <select value={tipo} onChange={e => setTipo(e.target.value)} className={selCls}>
+          <option value="todos">Ventas y retiros</option>
+          <option value="venta">Solo ventas</option>
+          <option value="retiro">Solo retiros</option>
+        </select>
+        <select value={metodo} onChange={e => setMetodo(e.target.value)} className={selCls}>
+          <option value="todos">Todos los métodos</option>
+          {METODOS.map(m => <option key={m.id} value={m.id}>{m.label}</option>)}
+        </select>
+        <label className="flex items-center gap-1.5 text-xs text-zinc-400">
+          <input type="checkbox" checked={verAnuladas} onChange={e => setVerAnuladas(e.target.checked)}
+            className="accent-yellow-400" />
+          Ver anuladas
+        </label>
       </div>
 
       {/* Totales */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-          <p className="text-zinc-500 text-xs">Vendido</p>
-          <p className="text-green-400 font-black text-lg">{fmt(vendido)}</p>
-        </div>
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-3">
-          <p className="text-zinc-500 text-xs">Retirado</p>
-          <p className="text-red-400 font-black text-lg">{fmt(retirado)}</p>
-        </div>
+      <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs">
+        <span className="text-zinc-400">Vendido <b className="text-green-400 text-sm">{fmt(vendido)}</b></span>
+        <span className="text-zinc-400">Retirado <b className="text-red-400 text-sm">{fmt(retirado)}</b></span>
+        <span className="text-zinc-400">Neto <b className="text-white text-sm">{fmt(vendido - retirado)}</b></span>
+        <span className="text-zinc-600">|</span>
+        {porMetodo.map(m => <span key={m.id} className="text-zinc-500">{m.label} <b className="text-zinc-300">{fmt(m.total)}</b></span>)}
+        <span className="text-zinc-600 ml-auto">{filtrados.length} movimientos</span>
       </div>
-      {porMetodo.length > 0 && (
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-zinc-400">
-          {porMetodo.map(m => <span key={m.id}>{m.label}: <b className="text-white">{fmt(m.total)}</b></span>)}
-        </div>
-      )}
 
       {error && <p className="text-red-400 text-xs">{error}</p>}
-      {cargando && <p className="text-zinc-500 text-sm">Cargando...</p>}
-      {!cargando && filtrados.length === 0 && <p className="text-zinc-600 text-sm">Sin movimientos.</p>}
 
-      {/* Lista */}
-      <div className="flex flex-col gap-2">
-        {filtrados.map(m => (
-          <div key={`${m._tipo}-${m.id}`}
-            className={`rounded-2xl border p-3 ${m.anulada ? 'border-zinc-800 bg-zinc-950 opacity-60' : 'border-zinc-800 bg-zinc-900'}`}>
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
-                  <span className="text-zinc-500 text-xs">{hora(m.created_at)}</span>
+      {/* Tabla */}
+      <div className="overflow-x-auto border border-zinc-800 rounded-xl">
+        <table className="w-full min-w-[760px] text-xs">
+          <thead className="bg-zinc-900 text-zinc-500 uppercase tracking-wider text-[10px]">
+            <tr>
+              <th className="text-left font-bold px-2 py-2">Fecha</th>
+              <th className="text-left font-bold px-2 py-2">Hora</th>
+              <th className="text-left font-bold px-2 py-2">Tipo</th>
+              <th className="text-left font-bold px-2 py-2">Concepto</th>
+              <th className="text-left font-bold px-2 py-2">Alumno / Beneficiario</th>
+              <th className="text-left font-bold px-2 py-2">Método</th>
+              <th className="text-right font-bold px-2 py-2">Monto</th>
+              <th className="text-left font-bold px-2 py-2">Capturó</th>
+              <th className="px-2 py-2" />
+            </tr>
+          </thead>
+          <tbody>
+            {cargando && (
+              <tr><td colSpan={9} className="px-2 py-4 text-center text-zinc-500">Cargando...</td></tr>
+            )}
+            {!cargando && filtrados.length === 0 && (
+              <tr><td colSpan={9} className="px-2 py-4 text-center text-zinc-600">Sin movimientos en este rango.</td></tr>
+            )}
+            {!cargando && filtrados.map((m, i) => (
+              <tr key={`${m._tipo}-${m.id}`}
+                className={`border-t border-zinc-800/70 ${i % 2 ? 'bg-zinc-900/40' : ''} ${m.anulada ? 'opacity-45' : ''}`}>
+                <td className="px-2 py-1.5 whitespace-nowrap text-zinc-400">{dia(m.created_at)}</td>
+                <td className="px-2 py-1.5 whitespace-nowrap text-zinc-400">{hora(m.created_at)}</td>
+                <td className="px-2 py-1.5 whitespace-nowrap">
                   <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded
                     ${m._tipo === 'venta' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
                     {m._tipo === 'venta' ? 'Venta' : m.tipo === 'nomina' ? 'Nómina' : 'Gasto'}
                   </span>
-                  {m.es_alta === true && <span className="text-[10px] font-bold text-green-400">🆕 Alta</span>}
-                  {m.es_alta === false && <span className="text-[10px] font-bold text-blue-400">🔄 Renovación</span>}
-                  {m.anulada && <span className="text-[10px] font-bold uppercase text-red-500">Anulada</span>}
-                </div>
-                <p className={`text-white text-sm font-bold ${m.anulada ? 'line-through' : ''}`}>
-                  {m.concepto}{m._tipo === 'venta' && m.cantidad > 1 ? ` ×${m.cantidad}` : ''}
-                </p>
-                {m._quien && <p className="text-zinc-400 text-xs">{m._quien}</p>}
-                <p className="text-zinc-600 text-xs">
-                  {metodoLabel(m.metodo_pago)}{m.usuario_email ? ` · ${m.usuario_email}` : ''}
-                </p>
-                {m.updated_at && !m.anulada && (
-                  <p className="text-yellow-600 text-xs">Editado {hora(m.updated_at)}{m.editado_por ? ` por ${m.editado_por}` : ''}</p>
-                )}
-                {m.anulada && m.anulada_motivo && <p className="text-red-400/80 text-xs">Motivo: {m.anulada_motivo}</p>}
-              </div>
-              <p className={`font-black shrink-0 ${m._tipo === 'venta' ? 'text-green-400' : 'text-red-400'} ${m.anulada ? 'line-through' : ''}`}>
-                {m._tipo === 'retiro' ? '−' : ''}{fmt(m._monto)}
-              </p>
-            </div>
-            {!m.anulada && (
-              <div className="flex gap-2 mt-2">
-                <button onClick={() => setEditando(m)}
-                  className="flex-1 py-1.5 rounded-lg bg-zinc-800 text-zinc-300 text-xs font-bold active:scale-95">Editar</button>
-                <button onClick={() => setAnulando(m)}
-                  className="flex-1 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-bold active:scale-95">Anular</button>
-              </div>
-            )}
-          </div>
-        ))}
+                </td>
+                <td className="px-2 py-1.5 max-w-[240px]">
+                  <div className="flex items-center gap-1.5">
+                    <span className={`truncate text-white font-semibold ${m.anulada ? 'line-through' : ''}`} title={m.concepto}>
+                      {m.concepto}{m._tipo === 'venta' && m.cantidad > 1 ? ` ×${m.cantidad}` : ''}
+                    </span>
+                    {m.es_alta === true && <span className="shrink-0 text-[10px] font-bold text-green-400">ALTA</span>}
+                    {m.es_alta === false && <span className="shrink-0 text-[10px] font-bold text-blue-400">RENOV</span>}
+                    {m.anulada && (
+                      <span className="shrink-0 text-[10px] font-bold text-red-500" title={m.anulada_motivo ?? ''}>ANULADA</span>
+                    )}
+                    {m.updated_at && !m.anulada && (
+                      <span className="shrink-0 text-yellow-600" title={`Editado ${dia(m.updated_at)} ${hora(m.updated_at)}${m.editado_por ? ` por ${m.editado_por}` : ''}`}>✎</span>
+                    )}
+                  </div>
+                </td>
+                <td className="px-2 py-1.5 max-w-[200px] truncate text-zinc-400" title={m._quien ?? ''}>{m._quien ?? '—'}</td>
+                <td className="px-2 py-1.5 whitespace-nowrap text-zinc-400">{metodoLabel(m.metodo_pago)}</td>
+                <td className={`px-2 py-1.5 whitespace-nowrap text-right font-bold
+                  ${m._tipo === 'venta' ? 'text-green-400' : 'text-red-400'} ${m.anulada ? 'line-through' : ''}`}>
+                  {m._tipo === 'retiro' ? '−' : ''}{fmt(m._monto)}
+                </td>
+                <td className="px-2 py-1.5 max-w-[140px] truncate text-zinc-600" title={m.usuario_email ?? ''}>
+                  {m.usuario_email?.split('@')[0] ?? '—'}
+                </td>
+                <td className="px-2 py-1 whitespace-nowrap text-right">
+                  {!m.anulada && (
+                    <>
+                      <button onClick={() => setEditando(m)} title="Editar"
+                        className="px-2 py-1 rounded-md bg-zinc-800 text-zinc-300 font-bold active:scale-95">Editar</button>
+                      <button onClick={() => setAnulando(m)} title="Anular"
+                        className="ml-1 px-2 py-1 rounded-md bg-red-500/10 text-red-400 font-bold active:scale-95">Anular</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {editando && <EditarMov mov={editando} onClose={() => setEditando(null)} onSaved={() => { setEditando(null); cargar() }} />}
