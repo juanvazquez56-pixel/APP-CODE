@@ -1,8 +1,10 @@
-﻿import { useState, useEffect } from 'react'
+﻿import { useState, useEffect, lazy, Suspense } from 'react'
 import { supabase } from '../supabaseClient'
 import AdminAnuncios from './AdminAnuncios'
 import AdminHorarios from './AdminHorarios'
 import AdminPlanes from './AdminPlanes'
+
+const POS = lazy(() => import('./POS'))
 
 export default function MenuMaestro({ onNav }) {
   const [session, setSession] = useState(null)
@@ -94,14 +96,14 @@ export default function MenuMaestro({ onNav }) {
       <p className="text-zinc-500 text-xs mb-4 tracking-wide">Conectado como {session.user.email}</p>
 
       <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide">
-        {['anuncios', 'horarios', 'planes'].map(t => (
+        {['anuncios', 'horarios', 'planes', 'pos'].map(t => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`shrink-0 px-4 py-2 rounded-xl font-bold text-sm transition-all active:scale-95
               ${tab === t ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}
           >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
+            {t === 'pos' ? 'POS' : t.charAt(0).toUpperCase() + t.slice(1)}
           </button>
         ))}
       </div>
@@ -109,6 +111,11 @@ export default function MenuMaestro({ onNav }) {
       {tab === 'anuncios' && <AdminAnuncios />}
       {tab === 'horarios' && <AdminHorarios />}
       {tab === 'planes'   && <AdminPlanes />}
+      {tab === 'pos' && (
+        <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando POS...</p>}>
+          <POS />
+        </Suspense>
+      )}
 
       <button
         onClick={handleLogout}
