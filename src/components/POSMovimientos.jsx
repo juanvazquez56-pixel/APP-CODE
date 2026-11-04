@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
-import { METODOS, METODOS_RETIRO, metodoLabel, fmt, SQL_PENDIENTE } from '../posConfig'
+import { METODOS, METODOS_RETIRO, metodoLabel, fmt, SQL_PENDIENTE, traerTodo } from '../posConfig'
 import POSModal, { Etiqueta, inputCls, Chips } from './POSModal'
 
 function iso(d) {
@@ -31,17 +31,6 @@ const RAPIDOS = [
 
 const hora = iso => new Date(iso).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: false })
 const dia = iso => new Date(iso).toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit', year: '2-digit' })
-
-// Supabase devuelve máximo 1000 filas por consulta: se pide por páginas.
-async function traerTodo(consulta) {
-  const filas = []
-  for (let desde = 0; ; desde += 1000) {
-    const { data, error } = await consulta().order('id').range(desde, desde + 999)
-    if (error) return { error }
-    filas.push(...data)
-    if (data.length < 1000) return { data: filas }
-  }
-}
 
 export default function POSMovimientos({ puedeEditar = true }) {
   const [[desde, hasta], setRango] = useState(rangoRapido('hoy'))

@@ -86,3 +86,9 @@ button, a[href], [role="button"] {
 .badge-elite   { @apply bg-red-900/60 text-red-400; }
 .badge-kids    { @apply bg-purple-900/60 text-purple-400; }
 .badge-mma     { @apply bg-yellow-900/60 text-yellow-400; }
+
+@media print {
+  nav, .no-print { display: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pb-nav { padding-bottom: 0 !important; }
+}

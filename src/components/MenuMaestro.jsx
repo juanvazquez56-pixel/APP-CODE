@@ -52,7 +52,7 @@ export default function MenuMaestro({ onNav }) {
   if (!session) {
     return (
       <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
-        <button onClick={() => onNav('mas')} className="text-zinc-500 text-sm mb-6 text-left">
+        <button onClick={() => onNav('mas')} className="text-zinc-500 text-sm mb-6 text-left no-print">
           ← Volver
         </button>
         <h2 className="font-display text-2xl font-black uppercase tracking-widest text-yellow-400 mb-1">
@@ -90,7 +90,7 @@ export default function MenuMaestro({ onNav }) {
 
   return (
     <div className="flex flex-col min-h-screen px-4 pt-6 pb-4">
-      <button onClick={() => onNav('mas')} className="text-zinc-500 text-sm mb-6 text-left">
+      <button onClick={() => onNav('mas')} className="text-zinc-500 text-sm mb-6 text-left no-print">
         ← Volver
       </button>
       <h2 className="font-display text-2xl font-black uppercase tracking-widest text-yellow-400 mb-1">
@@ -124,7 +124,7 @@ export default function MenuMaestro({ onNav }) {
         if (!activa) return <p className="text-zinc-500 text-sm">Tu cuenta todavía no tiene permisos. Pide al admin que te los active.</p>
         return (
           <>
-            <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide">
+            <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide no-print">
               {visibles.map(t => (
                 <button
                   key={t.id}
@@ -150,7 +150,7 @@ export default function MenuMaestro({ onNav }) {
 
       <button
         onClick={handleLogout}
-        className="text-red-500 text-sm mt-6"
+        className="text-red-500 text-sm mt-6 no-print"
       >
         Cerrar sesión
       </button>

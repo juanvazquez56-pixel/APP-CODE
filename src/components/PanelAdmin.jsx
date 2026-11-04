@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { supabase } from '../supabaseClient'
 import { PERMISOS, METAS_CAMPOS, CONCEPTOS_COSTO, fmt } from '../posConfig'
 import { Etiqueta, inputCls } from './POSModal'
@@ -6,9 +6,12 @@ import AdminAnuncios from './AdminAnuncios'
 import AdminHorarios from './AdminHorarios'
 import AdminPlanes from './AdminPlanes'
 
-const SIN_PERMISO = 'No se guardó: solo la cuenta admin puede cambiar esto. Si eres admin, revisa que hayas corrido supabase/pos_roles.sql.'
+const POSReportes = lazy(() => import('./POSReportes'))
+
+const SIN_PERMISO ='No se guardó: solo la cuenta admin puede cambiar esto. Si eres admin, revisa que hayas corrido supabase/pos_roles.sql.'
 
 export const SECCIONES_ADMIN = [
+  { id: 'reportes', label: '📊 Reportes', permiso: 'reportes', requiereConfig: true },
   { id: 'anuncios', label: '📢 Anuncios', permiso: 'anuncios' },
   { id: 'horarios', label: '🕐 Horarios', permiso: 'horarios' },
   { id: 'planes', label: '💰 Planes', permiso: 'planes' },
@@ -18,7 +21,8 @@ export const SECCIONES_ADMIN = [
 ]
 
 export function seccionesVisibles({ puede, esAdmin, configurado }) {
-  return SECCIONES_ADMIN.filter(s => s.soloAdmin ? esAdmin && configurado : puede(s.permiso))
+  return SECCIONES_ADMIN.filter(s =>
+    s.soloAdmin ? esAdmin && configurado : puede(s.permiso) && (!s.requiereConfig || configurado))
 }
 
 export default function PanelAdmin({ puede, esAdmin, configurado, onPermisosCambiados }) {
@@ -28,7 +32,7 @@ export default function PanelAdmin({ puede, esAdmin, configurado, onPermisosCamb
   if (!activa) return <p className="text-zinc-500 text-sm">No hay secciones disponibles para tu cuenta.</p>
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex gap-2 overflow-x-auto scrollbar-hide">
+      <div className="flex gap-2 overflow-x-auto scrollbar-hide no-print">
         {visibles.map(s => (
           <button key={s.id} onClick={() => setSeccion(s.id)}
             className={`shrink-0 px-3 py-2 rounded-xl font-bold text-sm whitespace-nowrap active:scale-95
@@ -37,6 +41,9 @@ export default function PanelAdmin({ puede, esAdmin, configurado, onPermisosCamb
           </button>
         ))}
       </div>
+      {activa === 'reportes' && (
+        <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando...</p>}><POSReportes /></Suspense>
+      )}
       {activa === 'anuncios' && <AdminAnuncios />}
       {activa === 'horarios' && <AdminHorarios />}
       {activa === 'planes' && <AdminPlanes />}

@@ -48,6 +48,17 @@ export const CONCEPTOS_COSTO = [
   { id: 'otro', label: 'Otro' },
 ]
 
+// Supabase devuelve máximo 1000 filas por consulta: se pide por páginas.
+export async function traerTodo(consulta) {
+  const filas = []
+  for (let desde = 0; ; desde += 1000) {
+    const { data, error } = await consulta().order('id').range(desde, desde + 999)
+    if (error) return { error }
+    filas.push(...data)
+    if (data.length < 1000) return { data: filas }
+  }
+}
+
 export const metodoLabel = id => METODOS.find(m => m.id === id)?.label ?? id
 
 export const fmt = n =>
