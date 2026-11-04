@@ -1,22 +1,12 @@
 ﻿import { useState, useEffect, lazy, Suspense } from 'react'
 import { supabase } from '../supabaseClient'
-import AdminAnuncios from './AdminAnuncios'
-import AdminHorarios from './AdminHorarios'
-import AdminPlanes from './AdminPlanes'
-
 import { usePermisos } from '../usePermisos'
 
 const POS = lazy(() => import('./POS'))
-const POSAjustes = lazy(() => import('./POSAjustes'))
+const PanelAdmin = lazy(() => import('./PanelAdmin'))
 
-const TABS = [
-  { id: 'anuncios', label: 'Anuncios' },
-  { id: 'horarios', label: 'Horarios' },
-  { id: 'planes', label: 'Planes' },
-  { id: 'pos', label: 'POS' },
-  { id: 'ajustes', label: '⚙️ Ajustes' },
-]
-const PERMISOS_POS = ['venta', 'retiro', 'corte', 'movimientos', 'productos', 'reportes']
+const PERMISOS_POS = ['venta', 'retiro', 'corte', 'movimientos', 'productos']
+const PERMISOS_ADMIN = ['anuncios', 'horarios', 'planes', 'reportes']
 
 export default function MenuMaestro({ onNav }) {
   const [session, setSession] = useState(null)
@@ -24,7 +14,7 @@ export default function MenuMaestro({ onNav }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [tab, setTab] = useState('anuncios')
+  const [tab, setTab] = useState('pos')
   const permisos = usePermisos(session)
 
   useEffect(() => {
@@ -125,10 +115,11 @@ export default function MenuMaestro({ onNav }) {
       {permisos.cargando ? (
         <p className="text-zinc-500 text-sm">Cargando...</p>
       ) : (() => {
-        const visibles = TABS.filter(t =>
-          t.id === 'ajustes' ? permisos.rol === 'admin' && !permisos.sinConfigurar
-          : t.id === 'pos' ? PERMISOS_POS.some(p => permisos.puede(p))
-          : permisos.puede(t.id))
+        const esAdmin = permisos.rol === 'admin'
+        const visibles = [
+          PERMISOS_POS.some(p => permisos.puede(p)) && { id: 'pos', label: '💵 POS' },
+          (esAdmin || PERMISOS_ADMIN.some(p => permisos.puede(p))) && { id: 'admin', label: '⚙️ Admin' },
+        ].filter(Boolean)
         const activa = visibles.some(t => t.id === tab) ? tab : visibles[0]?.id
         if (!activa) return <p className="text-zinc-500 text-sm">Tu cuenta todavía no tiene permisos. Pide al admin que te los active.</p>
         return (
@@ -146,12 +137,12 @@ export default function MenuMaestro({ onNav }) {
               ))}
             </div>
 
-            {activa === 'anuncios' && <AdminAnuncios />}
-            {activa === 'horarios' && <AdminHorarios />}
-            {activa === 'planes'   && <AdminPlanes />}
             <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando...</p>}>
-              {activa === 'pos'     && <POS puede={permisos.puede} />}
-              {activa === 'ajustes' && <POSAjustes onPermisosCambiados={permisos.recargar} />}
+              {activa === 'pos' && <POS puede={permisos.puede} />}
+              {activa === 'admin' && (
+                <PanelAdmin puede={permisos.puede} esAdmin={esAdmin} configurado={!permisos.sinConfigurar}
+                  onPermisosCambiados={permisos.recargar} />
+              )}
             </Suspense>
           </>
         )

@@ -2,25 +2,47 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { PERMISOS, METAS_CAMPOS, CONCEPTOS_COSTO, fmt } from '../posConfig'
 import { Etiqueta, inputCls } from './POSModal'
+import AdminAnuncios from './AdminAnuncios'
+import AdminHorarios from './AdminHorarios'
+import AdminPlanes from './AdminPlanes'
 
 const SIN_PERMISO = 'No se guardó: solo la cuenta admin puede cambiar esto. Si eres admin, revisa que hayas corrido supabase/pos_roles.sql.'
 
-export default function POSAjustes({ onPermisosCambiados }) {
-  const [seccion, setSeccion] = useState('permisos')
+export const SECCIONES_ADMIN = [
+  { id: 'anuncios', label: '📢 Anuncios', permiso: 'anuncios' },
+  { id: 'horarios', label: '🕐 Horarios', permiso: 'horarios' },
+  { id: 'planes', label: '💰 Planes', permiso: 'planes' },
+  { id: 'costos', label: '🏠 Costos fijos', soloAdmin: true },
+  { id: 'metas', label: '🎯 Metas', soloAdmin: true },
+  { id: 'permisos', label: '👥 Permisos de recepción', soloAdmin: true },
+]
+
+export function seccionesVisibles({ puede, esAdmin, configurado }) {
+  return SECCIONES_ADMIN.filter(s => s.soloAdmin ? esAdmin && configurado : puede(s.permiso))
+}
+
+export default function PanelAdmin({ puede, esAdmin, configurado, onPermisosCambiados }) {
+  const visibles = seccionesVisibles({ puede, esAdmin, configurado })
+  const [seccion, setSeccion] = useState(visibles[0]?.id)
+  const activa = visibles.some(s => s.id === seccion) ? seccion : visibles[0]?.id
+  if (!activa) return <p className="text-zinc-500 text-sm">No hay secciones disponibles para tu cuenta.</p>
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 overflow-x-auto scrollbar-hide">
-        {[['permisos', '👥 Permisos de recepción'], ['metas', '🎯 Metas'], ['costos', '🏠 Costos fijos']].map(([id, label]) => (
-          <button key={id} onClick={() => setSeccion(id)}
+        {visibles.map(s => (
+          <button key={s.id} onClick={() => setSeccion(s.id)}
             className={`shrink-0 px-3 py-2 rounded-xl font-bold text-sm whitespace-nowrap active:scale-95
-              ${seccion === id ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}>
-            {label}
+              ${activa === s.id ? 'bg-zinc-100 text-zinc-950' : 'bg-zinc-900 border border-zinc-800 text-zinc-400'}`}>
+            {s.label}
           </button>
         ))}
       </div>
-      {seccion === 'permisos' && <Permisos onGuardado={onPermisosCambiados} />}
-      {seccion === 'metas' && <Metas />}
-      {seccion === 'costos' && <CostosFijos />}
+      {activa === 'anuncios' && <AdminAnuncios />}
+      {activa === 'horarios' && <AdminHorarios />}
+      {activa === 'planes' && <AdminPlanes />}
+      {activa === 'costos' && <CostosFijos />}
+      {activa === 'metas' && <Metas />}
+      {activa === 'permisos' && <Permisos onGuardado={onPermisosCambiados} />}
     </div>
   )
 }
