@@ -64,7 +64,7 @@ export default function POSAlumnos({ onRenovar }) {
     .map(a => ({ ...a, estatus: a.estatus ?? 'activo', vig: calcularVigencia(pagos[a.id] ?? [], dias) }))
     .sort((x, y) => x.nombre.localeCompare(y.nombre)), [alumnos, pagos, dias])
 
-  const ficha = fichaId === 'nuevo' ? { id: null, nombre: '', telefono: '', estatus: 'activo', vig: calcularVigencia([]) }
+  const ficha = fichaId === 'nuevo' ? { id: null, nombre: '', telefono: '', estatus: 'activo', es_kid: false, vig: calcularVigencia([]) }
     : filas.find(f => f.id === fichaId)
 
   if (ficha) {
@@ -140,7 +140,8 @@ function Directorio({ filas, onAbrir }) {
               <tr key={f.id} onClick={() => onAbrir(f.id)}
                 className={`border-t border-zinc-800/70 cursor-pointer hover:bg-zinc-800/60 ${i % 2 ? 'bg-zinc-900/40' : ''} ${f.estatus === 'inactivo' ? 'opacity-50' : ''}`}>
                 <td className="px-2 py-1.5 text-white font-semibold">
-                  {f.nombre}{f.estatus === 'inactivo' && <span className="ml-1.5 text-[10px] text-zinc-500 font-bold">INACTIVO</span>}
+                  {f.nombre}{f.es_kid && <span className="ml-1.5 text-[10px] text-sky-400 font-bold">KID</span>}
+                  {f.estatus === 'inactivo' && <span className="ml-1.5 text-[10px] text-zinc-500 font-bold">INACTIVO</span>}
                 </td>
                 <td className="px-2 py-1.5 whitespace-nowrap text-zinc-400">{f.telefono ? formatoTel(f.telefono) : '—'}</td>
                 <td className="px-2 py-1.5 whitespace-nowrap text-zinc-400">{f.vig.plan ?? '—'}</td>
@@ -209,6 +210,7 @@ function Ficha({ alumno, pagos, todos, onVolver, onGuardado, onRenovar }) {
   const [nombre, setNombre] = useState(alumno.nombre)
   const [telefono, setTelefono] = useState(alumno.telefono ?? '')
   const [estatus, setEstatus] = useState(alumno.estatus)
+  const [esKid, setEsKid] = useState(!!alumno.es_kid)
   const [guardando, setGuardando] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -216,6 +218,7 @@ function Ficha({ alumno, pagos, todos, onVolver, onGuardado, onRenovar }) {
   const compartido = tel.length === 10
     ? todos.filter(f => f.id !== alumno.id && normalizarTel(f.telefono) === tel) : []
   const cambios = nombre.trim() !== alumno.nombre || tel !== normalizarTel(alumno.telefono) || estatus !== alumno.estatus
+    || esKid !== !!alumno.es_kid
   const historial = [...pagos].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
   const v = alumno.vig
 
@@ -224,15 +227,17 @@ function Ficha({ alumno, pagos, todos, onVolver, onGuardado, onRenovar }) {
     if (tel && tel.length !== 10) { setMsg('El celular debe tener 10 dígitos'); return }
     setGuardando(true)
     setMsg('')
-    const fila = { nombre: nombre.trim().toUpperCase(), telefono: tel || null, estatus }
+    const fila = { nombre: nombre.trim().toUpperCase(), telefono: tel || null, estatus, es_kid: esKid }
     const { data, error } = nuevo
       ? await supabase.from('alumnos').insert(fila).select()
       : await supabase.from('alumnos').update(fila).eq('id', alumno.id).select()
     setGuardando(false)
     if (error) {
-      setMsg(/estatus/.test(error.message)
-        ? 'Falta correr supabase/pos_alumnos.sql en Supabase.'
-        : 'Error: ' + error.message)
+      setMsg(/es_kid/.test(error.message)
+        ? 'Falta correr supabase/pos_seguimiento.sql en Supabase.'
+        : /estatus/.test(error.message)
+          ? 'Falta correr supabase/pos_alumnos.sql en Supabase.'
+          : 'Error: ' + error.message)
       return
     }
     if (!data?.length) { setMsg('No se guardó: tu cuenta no tiene permiso para editar alumnos.'); return }
@@ -278,7 +283,7 @@ function Ficha({ alumno, pagos, todos, onVolver, onGuardado, onRenovar }) {
           <input value={telefono} inputMode="tel" placeholder="442 123 4567" onChange={e => setTelefono(e.target.value)} className={inputCls} />
           {compartido.length > 0 && (
             <p className="text-yellow-500 text-xs mt-1">
-              Este celular ya lo tiene: {compartido.map(f => f.nombre).join(', ')}. Si son hermanos está bien; si es la misma persona, no la registres dos veces.
+              Este celular ya lo tiene: {compartido.map(f => f.nombre).join(', ')}. Si son hermanos Kids está bien. Si son adultos, cada uno necesita su propio número para entrar a Tu ruta; si es la misma persona, no la registres dos veces.
             </p>
           )}
         </div>
@@ -287,6 +292,13 @@ function Ficha({ alumno, pagos, todos, onVolver, onGuardado, onRenovar }) {
             Activo <span className="text-zinc-500 text-xs block">Desmárcalo si ya se dio de baja: sale de vencimientos.</span>
           </span>
           <input type="checkbox" checked={estatus === 'activo'} onChange={e => setEstatus(e.target.checked ? 'activo' : 'inactivo')}
+            className="w-5 h-5 accent-yellow-400" />
+        </label>
+        <label className="flex items-center justify-between bg-zinc-950 border border-zinc-800 rounded-xl p-3">
+          <span className="text-sm text-white">
+            Es alumno NK Kids <span className="text-zinc-500 text-xs block">Los Kids no entran a Tu ruta con su celular; el coach sí les lleva su avance.</span>
+          </span>
+          <input type="checkbox" checked={esKid} onChange={e => setEsKid(e.target.checked)}
             className="w-5 h-5 accent-yellow-400" />
         </label>
         {msg && <p className="text-red-400 text-xs">{msg}</p>}

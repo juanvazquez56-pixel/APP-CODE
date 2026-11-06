@@ -31,6 +31,9 @@ export const PERMISOS = [
     { id: 'horarios', label: 'Horarios' },
     { id: 'planes', label: 'Planes' },
   ] },
+  { grupo: 'Seguimiento de alumnos', items: [
+    { id: 'evaluaciones', label: 'Menú Coach: evaluar el avance de los alumnos' },
+  ] },
 ]
 
 export const METAS_CAMPOS = [

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import content from '../content'
+import MiAvance from './MiAvance'
 
 const { ruta } = content
 
@@ -64,6 +65,9 @@ export default function Ruta({ onNav }) {
             ))}
           </div>
         </section>
+
+        {/* MI AVANCE (el alumno entra con su celular) */}
+        <MiAvance />
 
         {/* REGLA */}
         <div className="flex gap-3 items-start bg-amber-500/8 border border-amber-500/35 rounded-2xl p-4 mb-6">

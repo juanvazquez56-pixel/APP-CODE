@@ -101,7 +101,7 @@ export default function MenuMaestro({ onNav }) {
         {!permisos.cargando && !permisos.sinConfigurar && (
           <span className={`ml-2 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase
             ${permisos.rol === 'admin' ? 'bg-yellow-400/15 text-yellow-400' : 'bg-zinc-800 text-zinc-300'}`}>
-            {permisos.rol === 'admin' ? 'Admin' : 'Recepción'}
+            {permisos.rol === 'admin' ? 'Admin' : permisos.rol === 'entrenador' ? 'Entrenador' : 'Recepción'}
           </span>
         )}
       </p>
@@ -121,7 +121,13 @@ export default function MenuMaestro({ onNav }) {
           (esAdmin || PERMISOS_ADMIN.some(p => permisos.puede(p))) && { id: 'admin', label: '⚙️ Admin' },
         ].filter(Boolean)
         const activa = visibles.some(t => t.id === tab) ? tab : visibles[0]?.id
-        if (!activa) return <p className="text-zinc-500 text-sm">Tu cuenta todavía no tiene permisos. Pide al admin que te los active.</p>
+        if (!activa) return (
+          <p className="text-zinc-500 text-sm">
+            {permisos.puede('evaluaciones')
+              ? 'Tu cuenta es de entrenador: entra al Menú Coach desde la sección Más.'
+              : 'Tu cuenta todavía no tiene permisos. Pide al admin que te los active.'}
+          </p>
+        )
         return (
           <>
             <div className="flex gap-2 mb-5 overflow-x-auto scrollbar-hide no-print">

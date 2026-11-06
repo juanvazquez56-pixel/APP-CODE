@@ -11,6 +11,7 @@ import Galeria from './components/Galeria'
 import Campeones from './components/Campeones'
 import InstalarApp from './components/InstalarApp'
 import MenuMaestro from './components/MenuMaestro'
+import MenuCoach from './components/MenuCoach'
 import Ruta from './components/Ruta'
 import Splash from './components/Splash'
 
@@ -34,6 +35,7 @@ export default function App() {
         {seccion === 'galeria'     && <Galeria     onNav={setSeccion} />}
         {seccion === 'campeones'   && <Campeones   onNav={setSeccion} />}
         {seccion === 'menumaestro' && <MenuMaestro onNav={setSeccion} />}
+        {seccion === 'menucoach'   && <MenuCoach   onNav={setSeccion} />}
         {seccion === 'ruta'        && <Ruta        onNav={setSeccion} />}
       </div>
       <InstalarApp />

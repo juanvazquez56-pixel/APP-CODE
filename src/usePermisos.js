@@ -25,6 +25,8 @@ export function usePermisos(session) {
 
   useEffect(() => { cargar() }, [cargar])
 
-  const puede = permiso => estado.rol === 'admin' || !!estado.permisos[permiso]
+  // El entrenador solo puede evaluar avance; recepción usa los permisos que el admin le active.
+  const puede = permiso => estado.rol === 'admin'
+    || (estado.rol === 'entrenador' ? permiso === 'evaluaciones' : !!estado.permisos[permiso])
   return { ...estado, puede, recargar: cargar }
 }

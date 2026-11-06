@@ -457,6 +457,12 @@ calculadora: {
       emoji: "🔑",
       descripcion: "Panel de administración (solo staff)",
     },
+    {
+      id: "menucoach",
+      label: "Menú Coach",
+      emoji: "🥊",
+      descripcion: "Avance de los alumnos (solo entrenadores)",
+    },
     // Agrega aquí más accesos en el futuro siguiendo el mismo formato.
   ],
 
