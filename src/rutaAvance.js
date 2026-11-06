@@ -46,3 +46,10 @@ export function calcularAvance(temas = [], criterios = []) {
     criterioMarcado: (fase, id) => c.has(`${fase}:${id}`),
   }
 }
+
+// 'ok' (aprobada) | 'actual' (en la que vas) | 'bloqueada' (todavía no se abre)
+export function estadoFase(av, n) {
+  const f = av.fases.find(x => x.n === n)
+  if (f.aprobada) return 'ok'
+  return n === av.faseActual ? 'actual' : 'bloqueada'
+}

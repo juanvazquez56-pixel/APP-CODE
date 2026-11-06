@@ -12,7 +12,7 @@
 
 @layer utilities {
   .font-display {
-    font-family: Impact, 'Arial Narrow', Arial, sans-serif;
+    font-family: Impact, Anton, 'Arial Narrow', Arial, sans-serif;
   }
   /* Scrollbar horizontal para tabs en celular */
   .scrollbar-hide::-webkit-scrollbar { display: none; }

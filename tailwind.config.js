@@ -14,7 +14,7 @@ export default {
         }
       },
       fontFamily: {
-        display: ['Impact', 'Arial Narrow', 'Arial', 'sans-serif'],
+        display: ['Impact', 'Anton', 'Arial Narrow', 'Arial', 'sans-serif'],
       }
     },
   },
