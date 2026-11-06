@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { METODOS, metodoLabel } from '../posConfig'
+import { normalizarTel, formatoTel } from '../posAlumnos'
 const CATEGORIAS = ['todos', 'membresia', 'pase', 'bebida', 'equipo']
 
-export default function POSVenta() {
+export default function POSVenta({ alumnoInicial = null }) {
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [categoriaFiltro, setCategoriaFiltro] = useState('todos')
+  const [precargado, setPrecargado] = useState(alumnoInicial)
+  const [categoriaFiltro, setCategoriaFiltro] = useState(alumnoInicial ? 'membresia' : 'todos')
   const [paso, setPaso] = useState('catalogo') // catalogo | detalle | alumno | confirmado
   const [productoSel, setProductoSel] = useState(null)
   const [cantidad, setCantidad] = useState(1)
@@ -29,9 +31,14 @@ export default function POSVenta() {
   }
 
   async function cargarAlumnos(q) {
-    if (!q || q.length < 2) { setAlumnos([]); return }
-    const { data } = await supabase.from('alumnos').select('id, nombre, telefono')
-      .ilike('nombre', `%${q}%`).limit(10)
+    const texto = (q ?? '').replace(/[,()*%]/g, ' ').trim()
+    if (texto.length < 2) { setAlumnos([]); return }
+    const digitos = normalizarTel(texto)
+    let consulta = supabase.from('alumnos').select('id, nombre, telefono')
+    consulta = digitos.length >= 3
+      ? consulta.or(`nombre.ilike.*${texto}*,telefono.ilike.*${digitos}*`)
+      : consulta.ilike('nombre', `%${texto}%`)
+    const { data } = await consulta.limit(10)
     if (data) setAlumnos(data)
   }
 
@@ -39,7 +46,7 @@ export default function POSVenta() {
     setProductoSel(p)
     setCantidad(1)
     setMetodo('efectivo')
-    setAlumnoSel(null)
+    setAlumnoSel(p.es_membresia ? precargado : null)
     setBusqueda('')
     setAlumnos([])
     setNuevoAlumno({ nombre: '', telefono: '' })
@@ -65,9 +72,11 @@ export default function POSVenta() {
     if (productoSel.es_membresia) {
       if (modoAlumno === 'nuevo') {
         if (!nuevoAlumno.nombre.trim()) { setError('El nombre del alumno es obligatorio'); setGuardando(false); return }
+        const tel = normalizarTel(nuevoAlumno.telefono)
+        if (tel && tel.length !== 10) { setError('El celular debe tener 10 dígitos'); setGuardando(false); return }
         const { data: a, error: ea } = await supabase.from('alumnos').insert({
-          nombre: nuevoAlumno.nombre.trim(),
-          telefono: nuevoAlumno.telefono.trim() || null,
+          nombre: nuevoAlumno.nombre.trim().toUpperCase(),
+          telefono: tel || null,
         }).select().single()
         if (ea) { setError('Error al crear alumno: ' + ea.message); setGuardando(false); return }
         alumnoId = a.id
@@ -75,7 +84,11 @@ export default function POSVenta() {
       } else {
         if (!alumnoSel) { setError('Selecciona o registra un alumno'); setGuardando(false); return }
         alumnoId = alumnoSel.id
-        esAlta = false
+        // Alta = nunca había pagado una membresía; si ya pagó antes, es renovación.
+        const { data: previas, error: ep } = await supabase.from('ventas').select('id')
+          .eq('alumno_id', alumnoSel.id).eq('categoria', 'membresia').eq('anulada', false).limit(1)
+        if (ep) { setError('Error al revisar historial: ' + ep.message); setGuardando(false); return }
+        esAlta = previas.length === 0
       }
     }
 
@@ -101,6 +114,8 @@ export default function POSVenta() {
   }
 
   function nuevaVenta() {
+    setPrecargado(null)
+    setCategoriaFiltro('todos')
     setProductoSel(null)
     setUltimaVenta(null)
     setPaso('catalogo')
@@ -114,6 +129,12 @@ export default function POSVenta() {
   if (paso === 'catalogo') return (
     <div>
       <h3 className="font-bold text-white text-base mb-3">Venta</h3>
+      {precargado && (
+        <div className="flex items-center justify-between gap-2 bg-yellow-400/10 border border-yellow-400/40 rounded-xl px-3 py-2 mb-3">
+          <p className="text-sm text-white">Renovando a <b>{precargado.nombre}</b>: elige su plan.</p>
+          <button onClick={() => { setPrecargado(null); setCategoriaFiltro('todos') }} className="text-zinc-400 text-xs">Quitar</button>
+        </div>
+      )}
       {cargando && <p className="text-zinc-500 text-sm">Cargando productos...</p>}
 
       {/* filtro categorías */}
@@ -211,17 +232,17 @@ export default function POSVenta() {
       {modoAlumno === 'buscar' && (
         <div>
           <input
-            placeholder="Buscar por nombre..."
+            placeholder="Buscar por nombre o celular..."
             value={busqueda}
             onChange={e => { setBusqueda(e.target.value); cargarAlumnos(e.target.value) }}
             className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-white text-sm mb-2"
           />
-          {alumnos.map(a => (
+          {[...(alumnoSel && !alumnos.some(a => a.id === alumnoSel.id) ? [alumnoSel] : []), ...alumnos].map(a => (
             <button key={a.id} onClick={() => setAlumnoSel(a)}
               className={`w-full text-left p-3 rounded-xl mb-2 border transition-all
                 ${alumnoSel?.id === a.id ? 'border-yellow-400 bg-yellow-400/10' : 'border-zinc-800 bg-zinc-900'}`}>
               <p className="text-white text-sm font-bold">{a.nombre}</p>
-              {a.telefono && <p className="text-zinc-500 text-xs">{a.telefono}</p>}
+              {a.telefono && <p className="text-zinc-500 text-xs">{formatoTel(a.telefono)}</p>}
             </button>
           ))}
           {busqueda.length >= 2 && alumnos.length === 0 && (

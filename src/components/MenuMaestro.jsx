@@ -5,7 +5,7 @@ import { usePermisos } from '../usePermisos'
 const POS = lazy(() => import('./POS'))
 const PanelAdmin = lazy(() => import('./PanelAdmin'))
 
-const PERMISOS_POS = ['venta', 'retiro', 'corte', 'movimientos', 'productos']
+const PERMISOS_POS = ['venta', 'retiro', 'corte', 'movimientos', 'alumnos', 'productos']
 const PERMISOS_ADMIN = ['anuncios', 'horarios', 'planes', 'reportes']
 
 export default function MenuMaestro({ onNav }) {

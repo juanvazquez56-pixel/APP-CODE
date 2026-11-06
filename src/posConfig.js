@@ -22,6 +22,7 @@ export const PERMISOS = [
     { id: 'corte', label: 'Hacer corte de caja' },
     { id: 'movimientos', label: 'Ver movimientos' },
     { id: 'editar', label: 'Editar y anular movimientos' },
+    { id: 'alumnos', label: 'Alumnos y vencimientos (incluye celulares)' },
     { id: 'productos', label: 'Productos y precios' },
     { id: 'reportes', label: 'Ver reportes y costos fijos' },
   ] },
