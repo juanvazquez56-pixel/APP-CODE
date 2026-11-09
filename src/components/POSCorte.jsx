@@ -6,6 +6,7 @@ const fmt = n => `$${Number(n).toLocaleString('es-MX', { minimumFractionDigits: 
 export default function POSCorte() {
   const [cargando, setCargando] = useState(true)
   const [desde, setDesde] = useState(null)
+  const [saldoInicial, setSaldoInicial] = useState(0)   // efectivo que se contó (y quedó en caja) en el corte anterior
   const [ventasEf, setVentasEf] = useState(0)
   const [retirosEf, setRetirosEf] = useState(0)
   const [totalVentas, setTotalVentas] = useState(0)
@@ -23,10 +24,12 @@ export default function POSCorte() {
     setError('')
     // Periodo abierto: desde el último corte (o desde el inicio del día si no hay)
     const { data: ultimo } = await supabase.from('corte_caja')
-      .select('created_at').order('created_at', { ascending: false }).limit(1)
+      .select('created_at, efectivo_contado').order('created_at', { ascending: false }).limit(1)
     const inicioDia = new Date(); inicioDia.setHours(0, 0, 0, 0)
     const inicio = ultimo?.[0]?.created_at ?? inicioDia.toISOString()
     setDesde(inicio)
+    // Lo que quedó en caja al cerrar el corte anterior es el punto de partida de este periodo.
+    setSaldoInicial(Number(ultimo?.[0]?.efectivo_contado ?? 0))
 
     const [{ data: ventas, error: ev }, { data: retiros, error: er }] = await Promise.all([
       supabase.from('ventas').select('total, metodo_pago').gt('created_at', inicio).eq('anulada', false),
@@ -43,7 +46,7 @@ export default function POSCorte() {
     setCargando(false)
   }
 
-  const esperado = ventasEf - retirosEf
+  const esperado = saldoInicial + ventasEf - retirosEf
   const contadoNum = parseFloat(contado)
   const diferencia = isNaN(contadoNum) ? null : contadoNum - esperado
 
@@ -98,6 +101,7 @@ export default function POSCorte() {
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex flex-col gap-2 text-sm">
             <Fila label={`Ventas totales (${numVentas})`} valor={fmt(totalVentas)} tenue />
+            <Fila label="En caja desde el corte anterior" valor={`+${fmt(saldoInicial)}`} />
             <Fila label="Ventas en efectivo" valor={`+${fmt(ventasEf)}`} color="text-green-400" />
             <Fila label="Retiros en efectivo" valor={`−${fmt(retirosEf)}`} color="text-red-400" />
             <div className="border-t border-zinc-800 pt-2">
