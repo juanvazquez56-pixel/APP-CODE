@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { METODOS_RETIRO, metodoLabel } from '../posConfig'
 
-const TIPOS = ['nomina', 'gasto']
+const TIPOS = ['nomina', 'gasto', 'resguardo']
+const NOMBRE = { nomina: 'Nómina', gasto: 'Gasto', resguardo: 'Resguardo' }
+const EJEMPLO = { nomina: 'Ej: Nómina Iker', gasto: 'Ej: Renta, Luz, Consumibles', resguardo: 'Ej: Resguardo semanal' }
 
 export default function POSRetiro() {
   const [tipo, setTipo] = useState('nomina')
@@ -34,7 +36,10 @@ export default function POSRetiro() {
       usuario_id: user.id,
     }).select().single()
 
-    if (err) { setError('Error al guardar: ' + err.message); setGuardando(false); return }
+    if (err) {
+      setError(/tipo_check/.test(err.message ?? '') ? 'Falta correr supabase/pos_resguardo.sql en Supabase.' : 'Error al guardar: ' + err.message)
+      setGuardando(false); return
+    }
 
     setUltimoRetiro(data)
     setConfirmado(true)
@@ -69,7 +74,7 @@ export default function POSRetiro() {
   return (
     <form onSubmit={guardar} className="flex flex-col gap-4">
       <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-2">
-        <p className="text-red-400 text-xs font-bold">⚠️ Esta pantalla es para nómina y gastos — salidas de dinero. No la uses para ventas.</p>
+        <p className="text-red-400 text-xs font-bold">⚠️ Esta pantalla es para nómina, gastos y resguardo — salidas de dinero. No la uses para ventas.</p>
       </div>
 
       <h3 className="font-bold text-white text-base">Retiro</h3>
@@ -82,11 +87,17 @@ export default function POSRetiro() {
             <button key={t} type="button" onClick={() => setTipo(t)}
               className={`flex-1 py-2 rounded-xl font-bold text-sm capitalize transition-all
                 ${tipo === t ? 'bg-red-500 text-white' : 'bg-zinc-800 text-zinc-400'}`}>
-              {t === 'nomina' ? 'Nómina' : 'Gasto'}
+              {NOMBRE[t]}
             </button>
           ))}
         </div>
       </div>
+
+      {tipo === 'resguardo' && (
+        <p className="text-zinc-400 text-xs -mt-2">
+          Efectivo que sacas de la caja para guardarlo. Baja el efectivo de la caja, pero no cuenta como nómina ni como gasto en el cierre del mes.
+        </p>
+      )}
 
       {/* Concepto */}
       <div>
@@ -94,7 +105,7 @@ export default function POSRetiro() {
           Concepto *
         </label>
         <input
-          placeholder={tipo === 'nomina' ? 'Ej: Nómina Iker' : 'Ej: Renta, Luz, Consumibles'}
+          placeholder={EJEMPLO[tipo]}
           value={concepto}
           onChange={e => setConcepto(e.target.value)}
           className="w-full bg-zinc-900 border border-zinc-800 rounded-xl p-3 text-white text-sm"

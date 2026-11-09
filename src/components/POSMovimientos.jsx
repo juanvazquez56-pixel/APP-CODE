@@ -183,7 +183,7 @@ export default function POSMovimientos({ puedeEditar = true }) {
                 <td className="px-2 py-1.5 whitespace-nowrap">
                   <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded
                     ${m._tipo === 'venta' ? 'bg-green-500/15 text-green-400' : 'bg-red-500/15 text-red-400'}`}>
-                    {m._tipo === 'venta' ? 'Venta' : m.tipo === 'nomina' ? 'Nómina' : 'Gasto'}
+                    {m._tipo === 'venta' ? 'Venta' : m.tipo === 'nomina' ? 'Nómina' : m.tipo === 'resguardo' ? 'Resguardo' : 'Gasto'}
                   </span>
                 </td>
                 <td className="px-2 py-1.5 max-w-[240px]">
@@ -280,7 +280,7 @@ function EditarMov({ mov, onClose, onSaved }) {
           <div>
             <Etiqueta>Tipo</Etiqueta>
             <Chips valor={f.tipo} onChange={v => set('tipo', v)} activoCls="bg-red-500 text-white"
-              opciones={[{ id: 'nomina', label: 'Nómina' }, { id: 'gasto', label: 'Gasto' }]} />
+              opciones={[{ id: 'nomina', label: 'Nómina' }, { id: 'gasto', label: 'Gasto' }, { id: 'resguardo', label: 'Resguardo' }]} />
           </div>
         )}
         <div>
