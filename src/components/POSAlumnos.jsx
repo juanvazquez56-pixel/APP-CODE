@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { fmt, metodoLabel, traerTodo } from '../posConfig'
 import { ESTATUS, calcularVigencia, normalizarTel, formatoTel, textoRestantes } from '../posAlumnos'
 import { Etiqueta, inputCls } from './POSModal'
+import POSLimpieza from './POSLimpieza'
 
 const fecha = d => (d ? new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—')
 const selCls = 'bg-zinc-900 border border-zinc-800 rounded-lg px-2 py-1.5 text-white text-xs'
@@ -29,7 +30,7 @@ function Contacto({ tel }) {
   )
 }
 
-export default function POSAlumnos({ onRenovar }) {
+export default function POSAlumnos({ onRenovar, esAdmin = false }) {
   const [vista, setVista] = useState('directorio')
   const [alumnos, setAlumnos] = useState([])
   const [pagos, setPagos] = useState({})
@@ -40,8 +41,8 @@ export default function POSAlumnos({ onRenovar }) {
 
   useEffect(() => { cargar() }, [])
 
-  async function cargar() {
-    setCargando(true)
+  async function cargar(silencioso = false) {
+    if (!silencioso) setCargando(true)
     setError('')
     const [a, v, p] = await Promise.all([
       traerTodo(() => supabase.from('alumnos').select('*')),
@@ -77,7 +78,7 @@ export default function POSAlumnos({ onRenovar }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2 no-print">
-        {[['directorio', '📇 Directorio'], ['vencimientos', '⏰ Vencimientos']].map(([id, label]) => (
+        {[['directorio', '📇 Directorio'], ['vencimientos', '⏰ Vencimientos'], ...(esAdmin ? [['limpieza', '🧹 Limpieza']] : [])].map(([id, label]) => (
           <button key={id} onClick={() => setVista(id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95
               ${vista === id ? 'bg-yellow-400 text-zinc-950' : 'bg-zinc-800 text-zinc-400'}`}>
@@ -90,6 +91,7 @@ export default function POSAlumnos({ onRenovar }) {
       {error && <p className="text-red-400 text-xs">{error}</p>}
       {cargando ? <p className="text-zinc-500 text-sm">Cargando...</p>
         : vista === 'directorio' ? <Directorio filas={filas} onAbrir={setFichaId} />
+        : vista === 'limpieza' && esAdmin ? <POSLimpieza filas={filas} pagos={pagos} onCambio={() => cargar(true)} />
         : <Vencimientos filas={filas} onAbrir={setFichaId} />}
     </div>
   )

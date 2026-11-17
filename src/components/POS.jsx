@@ -15,7 +15,7 @@ const TABS = [
   { id: 'productos', label: '🏷️ Productos' },
 ]
 
-export default function POS({ puede = () => true }) {
+export default function POS({ puede = () => true, esAdmin = false }) {
   const [tab, setTab] = useState('venta')
   const [renovar, setRenovar] = useState(null)
   const visibles = TABS.filter(t => puede(t.id))
@@ -37,7 +37,7 @@ export default function POS({ puede = () => true }) {
       {activa === 'movimientos' && <POSMovimientos puedeEditar={puede('editar')} />}
       {activa === 'productos' && <POSProductos />}
       {activa === 'alumnos' && (
-        <POSAlumnos onRenovar={puede('venta') ? a => { setRenovar(a); setTab('venta') } : null} />
+        <POSAlumnos esAdmin={esAdmin} onRenovar={puede('venta') ? a => { setRenovar(a); setTab('venta') } : null} />
       )}
     </div>
   )

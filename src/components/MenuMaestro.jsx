@@ -144,7 +144,7 @@ export default function MenuMaestro({ onNav }) {
             </div>
 
             <Suspense fallback={<p className="text-zinc-500 text-sm">Cargando...</p>}>
-              {activa === 'pos' && <POS puede={permisos.puede} />}
+              {activa === 'pos' && <POS puede={permisos.puede} esAdmin={esAdmin} />}
               {activa === 'admin' && (
                 <PanelAdmin puede={permisos.puede} esAdmin={esAdmin} configurado={!permisos.sinConfigurar}
                   onPermisosCambiados={permisos.recargar} />

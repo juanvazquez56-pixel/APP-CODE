@@ -1,5 +1,8 @@
+import { createPortal } from 'react-dom'
+
+// Se dibuja en <body> para que "fixed" sea de la pantalla y no de un contenedor con animación (section-enter).
 export default function POSModal({ titulo, onClose, children }) {
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] bg-black/70 flex items-end sm:items-center justify-center animate-fade-in"
       onClick={onClose}>
       <div className="w-full sm:max-w-md bg-zinc-900 border border-zinc-800 rounded-t-3xl sm:rounded-3xl p-5 overflow-y-auto"
@@ -11,7 +14,8 @@ export default function POSModal({ titulo, onClose, children }) {
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
